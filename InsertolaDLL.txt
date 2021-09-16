@@ -1,0 +1,36 @@
+//INSERT
+void SortedList::Insert(ItemType newItem, bool& success)
+//                      IN                OUT
+{
+	int position;
+	tNodePtr previous;
+	bool isPresent;
+
+	tNodePtr newPtr;		//<--Creates new pointer.
+	newPtr = new tNode;   //<--Directs it toward: 'new tNode'.
+	isPresent = locateNode(newItem, previous, position);
+	//cout << "newItem: " << newItem << "   previousNEXTIT" << previous << "   position: "<<position<<endl;
+
+		if (isPresent && position>1)
+		{
+		
+			// No go: this would be a duplicate
+			//PushAvail(newItemSubscript); - - - - - - - - - - - OLA_ALL_VERSION
+			delete newPtr;
+			
+			success = false;
+		}
+		else			
+		{
+			
+		
+			//list[newItemSubscript].item = newItem; - - - - - - OLA_ALL_VERSION
+			newPtr->item = newItem;
+			//list[newItemSubscript].next = list[previous].next;-OLA_ALL_VERSION
+			newPtr->next = previous->next;
+			//list[previous].next=newItemSubscript;- - - - - - - OLA_ALL_VERSION
+			previous->next = newPtr;
+
+			++size;
+			success = true;
+		}

@@ -1,0 +1,97 @@
+ola203
+prime.cpp
+
+// ola203 BY Michael Ziegler, CSCI 2170-002, Due: 02/13/18
+// PROGRAM ID: prime.cpp / The Prime Number Program
+// AUTHOR: Michael Ziegler
+// INSTALLATION: MIDDLE TENNESSEE STATE UNIVERSITY
+// REMARKS: This program accepts as input positive odd integers and
+// categorizes them as 'prime' or 'composite'.
+//
+//  .    1    .    2    .    3    .    4    .    5    .    6    .    7    .
+//3456789012345678901234567890123456789012345678901234567890123456789012345
+
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+// Constants
+const int END_OF_DATA = -1;     // EOD sentine
+
+// Function prototypes:
+int  ObtainNumber();
+bool IsDivisible(int number);
+void PrintAnalysis(int testedNumber, bool composite);
+
+int main()
+{
+	int  testNumber;  // Number to be evaluated as prime or composite
+	bool divisible;   // "true" if number has divisors, otherwise "false"
+
+	cout << "ola203 by Michael Ziegler" << endl;;
+	testNumber = ObtainNumber();
+	while (testNumber != END_OF_DATA)
+	{
+		divisible = IsDivisible(testNumber);
+		PrintAnalysis(testNumber, divisible);
+		testNumber = ObtainNumber();
+	}
+	return 0;
+} // end main
+
+
+// Print message indicating if testedNumber is Prime or Composite.
+void PrintAnalysis(int testedNumber, bool composite)
+{
+	cout << endl << setw(10) << testedNumber;
+	if (composite)
+		cout << " is a Composite number." << endl;
+	else
+		cout << " is a Prime number." << endl;
+} // end PrintAnalysis
+
+
+// Return the next odd number in the input stream OR the
+// "END_OF_DATA" sentinel value if nothing left in input stream.
+int ObtainNumber()
+{
+	int test;
+	
+	cin >> test;
+	if(!cin)
+	{
+		return -1;
+	}
+	//Check to see if testedNumber is Prime or Composite.
+	while((test%2==0) || (test < 3) || test <= 0)
+	{
+		cin >> test;
+	}
+		return test;
+}
+		
+// end ObtainNumber
+
+
+// Determine if number is divisible by any divisors other than itself and 1.
+bool IsDivisible(int number)
+{
+int trialDivisor;
+bool divisible=false;
+for(trialDivisor=2;trialDivisor < number;trialDivisor++)
+{
+	//cout << trialDivisor<<endl;
+	if(number%trialDivisor==0)
+	{
+		divisible = true;
+	}
+}
+	return divisible;
+}
+// end IsDivisible
+5802 ranger2$ ls
+Debug             ola203      ola203.mk       ola203.txt  typescript
+composition1.dat  ola203.log  ola203.project  prime.cpp
+5803 ranger2$ cat composition1.dat
+3 5 7 9 25 991 289 16 8 29999 17
+

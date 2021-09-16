@@ -1,0 +1,106 @@
+ola208
+
+// ola208 BY Michael Ziegler CSCI 2170-002, Due: 03/22/18
+// ID:  DateType.cpp / Implementation file for "date" handling functions
+// RCS:  $Revision$ $Date$
+// AUTHOR:  Michael Ziegler
+// INSTALLATION:  MIDDLE TENNESSEE STATE UNIVERSITY
+// REMARKS:  Illustrative "struct" example
+
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+#include "DateType.h"
+
+void  SetDate(DateType& date, int mo, int da, int yr)
+{
+	date.month = mo;
+	date.day   = da;
+	date.year  = yr;
+}
+
+void PrintDate(DateType date)
+{
+	cout << date.month << "/" << date.day << "/"
+	  << setfill('0') << setw(2) << date.year % 100 << setfill(' ') << endl;
+}
+
+DateType NextDate(DateType date)
+{
+	DateType newDate;
+	int months[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+	newDate = date;
+	newDate.day++;
+	
+	if((newDate.day == 29 && newDate.month == 2) && (((newDate.year % 100 != 0) 
+	&& (newDate.year % 4 == 0) || (newDate.year % 400 == 0))))
+	{
+	}
+	
+	else if(newDate.day > months[newDate.month - 1])
+	{
+		newDate.month++;
+		
+		newDate.day = 1;
+	}
+	if(newDate.month == 13)
+	{
+		newDate.year++;
+		
+		newDate.month = 1;
+	}
+	return newDate;
+}
+
+5825 ranger2$ 
+5825 ranger2$ 
+5825 ranger2$ 
+5825 ranger2$ cat DateType.h
+// ola208 BY Michael Ziegler, CSCI 2170-002, Due: 03/22/18
+// ID:  DateType.h / Header file for "date" handling functions
+// RCS:  $Revision$ $Date$
+// AUTHOR:  Michael Ziegler
+// INSTALLATION:  MIDDLE TENNESSEE STATE UNIVERSITY
+// REMARKS:  Illustrative "struct" example
+
+#ifndef DateType_h       /* To prevent multiple inclusion problems */
+#define DateType_h
+
+struct DateType
+{
+	int month;
+	int day;
+	int year;
+};
+
+void     SetDate(DateType& date, int mo, int da, int yr);
+void     PrintDate(DateType date);
+DateType NextDate(DateType date);
+
+#endif
+5826 ranger2$  
+5827 ranger2$ 
+5827 ranger2$ 
+5827 ranger2$ ka
+bash: ka: command not found
+5828 ranger2$ ls
+DateType.cpp  DateType.o       DateTypeExample.cpp  makefile
+DateType.h    DateTypeExample  DateTypeExample.o    ola208.log
+5829 ranger2$ 
+5829 ranger2$ 
+5829 ranger2$ 
+5829 ranger2$ 
+5829 ranger2$ cat makefile
+# File "makefile" used to build "DateTypeExample" executable
+
+CPP = g++ -std=c++11 -g -pedantic -pipe
+
+DateTypeExample: DateTypeExample.o DateType.o
+	$(CPP) DateTypeExample.o DateType.o -o DateTypeExample
+
+DateTypeExample.o: DateTypeExample.cpp DateType.h
+	$(CPP) -c DateTypeExample.cpp
+	
+DateType.o: DateType.cpp DateType.h
+	$(CPP) -c DateType.cpp

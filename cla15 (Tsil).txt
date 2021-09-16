@@ -1,0 +1,209 @@
+cla15  'tsil'
+
+// tsil by Michael Ziegler, CSCI 2170-002, Due: 03/15/18
+// PROGRAM ID: arlist.cpp / Array-based linked list example w/tsil
+// AUTHOR: Michael Ziegler
+// REMARKS: This version of "arlist" uses a dummy header node
+#include <iostream>
+#include "arlist.h"
+
+using namespace std;
+
+
+// Reverse the linked list
+void tsil(tNode list[])
+//        INOUT
+{
+	cout<<"list[previous] : " << list[previous] << endl << "list[freespot] : " <<  list[freespot] << endl << "list[freespot].previous : " << list[freespot].previous << endl << "list[freespot].next : " << list[freespot].next;
+	
+	
+	
+	
+	return;
+}
+
+
+// Traverse and print the contents of the linked list
+void traverse(const tNode list[])
+//            IN
+{
+	int current = list[0].next;   // index of node under current consideration
+
+	while ( current != NONE )
+	{
+		cout << list[current].item << endl;
+		current = list[current].next;
+	}
+	return;
+}
+
+
+// Insert an item, in non-descending sorted order, into the linked list
+bool insert(tItemType newitem, tNode list[], int& n, int& avail)
+//          IN                 INOUT         INOUT   INOUT
+{
+	int freeSpot;          // index of a node available for storage
+	int current;           // index of node under current consideration
+	int previous = 0;      // index of prior node; dummy header has index 0
+	int future;
+	freeSpot = PopAvail(list, avail);
+	if (freeSpot == NONE)
+		return false;
+	else
+	{
+		// insert new item into array
+		list[freeSpot].item = newitem;
+		// traverse the list
+		current = list[previous].next;
+		while ( current != NONE  &&  list[current].item < newitem )
+		{
+			previous = current;
+			current = list[current].next;
+		}
+		// update the "next" values
+		list[freeSpot].next = list[previous].next;
+		list[previous].next = freeSpot;
+		++n;
+		return true;
+	}
+}
+
+
+// Remove specified target, if it exists, from the linked list
+bool remove(tItemType target, tNode list[], int& n, int& avail)
+//          IN                INOUT         INOUT   INOUT
+{
+	int current;           // index of node under current consideration
+	int previous = 0;      // index of prior node; dummy header has index 0
+
+	current = list[0].next;
+	while ( current != NONE  &&  list[current].item < target )
+	{
+		previous = current;
+		current = list[current].next;
+	}
+	if (n>0 && list[current].item == target)
+	{
+		list[previous].next = list[current].next;
+		PushAvail(list, current, avail);
+		--n;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+
+// Initialize the array's free space (avail) entries
+void init(tNode list[], int& n, int& avail, int capacity)
+//        OUT           OUT     OUT         IN
+{
+	// Initialize dummy node to show empty storage list
+	list[0].next = NONE;
+	n = 0;
+
+	// Link all the nodes into a "free" list
+	avail = 1;
+	for (int i=avail; i<capacity; ++i)
+		list[i].next = i+1;
+	list[capacity].next = NONE;
+}
+
+
+// Return the next available free spot in the array
+int  PopAvail(tNode list[], int& avail)
+//            INOUT         INOUT
+{
+	int freeSpot = avail;
+	avail = list[avail].next;
+	return freeSpot;
+}
+
+
+// Release a node in the array and make it a free spot
+void PushAvail(tNode list[], int pos, int& avail)
+//             INOUT         IN       INOUT
+{
+	list[pos].next = avail;
+	avail = pos;
+}
+
+5895 ranger2$ 
+5895 ranger2$ 
+5895 ranger2$ 
+5895 ranger2$ 
+5895 ranger2$ 
+5895 ranger2$ ls
+Debug     arlist.cpp   cla15.mk       cla15.workspace  cla2a.py  recase
+Makefile  cla15(tsil)  cla15.project  cla2a.cpp        ex21.log  shortwalk.py
+5896 ranger2$ cat cla2a.py
+# cla2a BY student name,  CSCI 2170-sec, Due: mm/dd/yyyy
+# PROGRAM ID:  cla2a.py / Landlord's earnings
+# AUTHOR:  student name
+# INSTALLATION:  MTSU
+# REMARKS:  This program calculates a landlord's earnings on an
+# apartment given the rent per month, the number of months rented,
+# and a deduction for a 5% manager's commission.  
+
+RATE = 0.05      # manager's commission rate
+
+def main():
+    rent = 250       # rent per month
+    numMonths = 7    # number of months rented
+
+    # Calculate earnings on the apartment
+    earnings = (1.0 - RATE) * rent * numMonths;
+
+    # Display results
+    print("The rent per month is:", rent)
+    print("The apartment has been rented for", numMonths, "months.")
+    print("The manager receives a", format(RATE,".0%"), "commission rate.")
+    print("The earnings were:", earnings)
+
+# Call main
+main()
+5897 ranger2$ 
+5897 ranger2$ 
+5897 ranger2$ 
+5897 ranger2$ 
+5897 ranger2$ 
+5897 ranger2$ cat cla2a.cpp
+// cla2a BY student name,  CSCI 2170-sec, Due: mm/dd/yyyy
+// PROGRAM ID:  cla2a.cpp / Landlord's earnings
+// AUTHOR:  student name
+// INSTALLATION:  MTSU
+// REMARKS:  This program calculates a landlord's earnings on an
+// apartment given the rent per month, the number of months rented,
+// and a deduction for a 5% manager's commission.  
+
+#include <iostream>
+using namespace std;
+
+int main()
+{
+	// Variable and constant declarations...
+	const float RATE = 0.05;      // manager's commission rate
+	float rent;                   // rent per month
+	float numMonths;              // number of months rented
+	float earnings;               // earnings on the apartment
+
+	// Assign values and calculate earnings
+	rent = 250;
+	numMonths = 7;
+
+	// Calculate earnings
+	earnings = (1.0 - RATE) * rent * numMonths;
+
+	// Display results
+	cout << "The rent per month is: " << rent << endl;
+	cout << "The apartment has been rented for ";
+	cout << numMonths << " months." << endl;
+	cout << "The manager receives a " << 100 * RATE;
+	cout << "% commission rate. " << endl;
+	cout << "The earnings were: " << earnings << endl;
+
+	//exit
+	return 0;
+}

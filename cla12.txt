@@ -1,0 +1,164 @@
+cla12
+
+cla26
+
+// cla10b BY Michael Ziegler, CSCI 2170-002
+//FILE:     cla10b.cpp
+//AUTHORS:  Prof. Brenda Parker and Dr. Judy Hankins
+//PURPOSE:  This program inputs information about an employee and
+//          calculates the employee's pay.  This process is
+//          continued until the user indicates that he/she
+//          desires to quit.
+//NOTE:     This program has exactly four syntax errors 
+//          and one logic error.  All errors are related to
+//          loops.  Read the comments carefully for each
+//          function to determine the purpose of each one.
+
+#include <iostream>
+#include <iomanip>
+
+using namespace std;
+
+// Function Prototypes:
+void Asterisks(int howMany);        //print asterisks
+int GetHours();                     //get hours worked
+float GetRate();                    //get rate of pay
+void PrintPay(float hourRate, int numberHours, float pay, int id);  //print pay
+char PromptForMore();               //get more?
+
+int main ()
+{
+	//local variables
+	char reply;            // ='y'-repeat process; ='n'-stop
+	float rateOfPay;       //rate of pay per hour
+	int hoursWorked;       //hours worked
+	int idNumber;          //ID of the employee
+	float overTimePay;     //employee overtime
+	float payAmount;       //employee pay
+
+	//process employees while the user says there are more
+	do
+	{
+		Asterisks(30);
+
+		// get the employee's data
+		hoursWorked = GetHours();
+		rateOfPay = GetRate();
+		cout << "Please enter your ID number: ";
+		cin >> idNumber;
+
+		//calculate the pay
+		if (hoursWorked <= 40)
+			payAmount = rateOfPay * hoursWorked;
+		else
+		{
+			overTimePay = (hoursWorked - 40) * rateOfPay  * 1.5;
+			payAmount = 40 * rateOfPay + overTimePay;
+		}
+		PrintPay(rateOfPay, hoursWorked, payAmount, idNumber);
+		reply = PromptForMore();
+	} while (reply =='y');
+
+	return 0;
+}
+
+
+//FUNCTION: Asterisks
+//TASK:     Prints a line of asterisks.  The parameter,
+//          howMany, indicates how many asterisks to print.
+
+void Asterisks(int howMany)
+{
+	//declare local variables
+     
+	for (i=0; i<howMany; i++)
+		cout << "*";
+	cout << endl;
+	return;
+}
+
+
+//FUNCTION: GetHours
+//TASK:     Reads in the hours worked by an employee.  Only
+//          positive values are accepted for the hours worked.
+//
+//          BE CAREFUL WITH THIS ONE!!  Is this function doing 
+//          what this description says it should?
+
+int GetHours()
+{
+	//variable declarations
+	int hours;                  // the number of hours worked
+
+	// get the number of hours worked
+	do
+	{
+		cout << "Please enter the hours worked: ";
+		cin >> hours;
+	} while hours > 0;
+	return hours;
+}
+
+
+//FUNCTION: GetRate
+//TASK:     This function reads in the rate of pay of an
+//          employee.  Only positive values are accepted 
+//          for the rate.
+//
+//          BE CAREFUL WITH THIS ONE!!  Is this function doing 
+//          what this description says it should?
+
+float GetRate()
+{
+	//variable declarations
+	float rate = -1;                    //rate of pay per hour
+
+	//get the rate of pay per hour
+	do while (rate < 0)
+	{
+		cout << "Please enter the pay rate per hour: ";
+		cin >> rate;
+	}
+	return rate;
+}
+
+
+//FUNCTION:  PrintPay
+//TASK:      This function prints an employee's pay check.
+//           Input parameters include the rate of pay per hour, 
+//           the number of hours worked, the employee id, and
+//           the pay.
+
+void PrintPay(float hourRate, int numberHours, float pay, int id)
+{
+	Asterisks(10);
+	Asterisks(10);
+	cout << setiosflags(ios::fixed) << setiosflags(ios::showpoint);
+	cout << setprecision(2);
+	cout << "EMPLOYEE #: " << id << endl;
+	cout << "PAY AMOUNT: $" << pay << endl;
+	cout << "RATE OF PAY:$" << hourRate << endl;
+	cout << "HOURS WORKED: " << numberHours << endl;
+}
+
+
+//FUNCTION:  PromptForMore
+//TASK:      This program asks the user whether there
+//           to continue or not.  Only a 'y' or 'n'
+//           answer is accepted as valid input.  The
+//           user's response is returned to the calling
+//           program.
+
+char PromptForMore()
+{
+	//declare local variables
+	char answer;       //the user's response
+
+	do
+	{
+		cout << "Do you wish to continue, y or n? ";
+		cin >> answer;
+		cout << endl;
+	} while (answer != 'y') && (answer != 'n');
+	return answer;
+}

@@ -1,0 +1,52 @@
+ola204
+
+// ola204 BY Michael Ziegler, CSCI 2170-002, Due: 02/20/18
+// PROGRAM ID: ola204.cpp / The Percentage Program
+// AUTHOR: Michael Ziegler
+// INSTALLATION: MIDDLE TENNESSEE STATE UNIVERSITY
+// REMARKS: Thos program reads  an unknown number of integers from
+// file "exam.dat", calculates their sum, and displays one entry per line, each
+// number and its percentage of the sum.
+//  .    1    .    2    .    3    .    4    .    5    .    6    .    7    .
+//3456789012345678901234567890123456789012345678901234567890123456789012345
+
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+using namespace std;
+
+int main()
+{
+	// Declarations.
+	int numberCount = 0;
+	double sum = 0, storedArray[25];
+
+	ifstream numberFile;
+	
+	// Opens the file "exam.dat.
+	numberFile.open ("exam.dat");
+	
+	// Stores unknown number of integers into "storedArray[i]".
+	for(int i=0; i < 25; ++i)
+	{
+		if(numberFile)
+		{
+		numberFile >> storedArray[i];
+		numberCount++;
+		sum += storedArray[i];
+		}
+	}
+	
+	
+	// Displays heading, and one entry per line, each number and its 
+	// percentage of the sum.
+	cout << setw(10) << "Sum Equals:" << setw(7) << sum << endl << endl;
+	
+	for (int j = 0; j < numberCount-1;++j)
+	{
+		cout << setw(10) << fixed << setprecision(0) << storedArray[j] <<
+		setw(7) << fixed << setprecision(1) << (storedArray[j]/sum) *100 <<
+		"%" << endl;
+	}
+	numberFile.close();
+}

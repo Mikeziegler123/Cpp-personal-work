@@ -1,0 +1,42 @@
+ola202
+
+// OLA202 BY Michael Ziegler, CSCI 2170-002, Due: 02/06/18
+// PROGRAM ID:  OA202.cpp / The Square Triangular Numbers Problem
+// AUTHOR:  Michael Ziegler
+// INSTALLATION:  MTSU
+// REMARKS: This Program algorithmically determines the first four square 
+// triangular numbers by finding triangular numbers, and checking to see if they
+// squares. If they are both triangular, and perfect squares, the program 
+// displays the quantity specified in the variable "HOW_MANY" to cout"
+/*  1   2   3   4   5   6   7   8   9   0   1   2   3   4   5   6   7   8   9   
+/*3456789012345678901234567890123456789012345678901234567890123456789012345678*/
+
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+int main()
+{
+	int const HOW_MANY = 4;
+	int count = 1, SqTCount = 1, triNum, rootOfTri;
+	string studentName = "Michael Ziegler";
+	
+		cout << "CSCI 2170 OLA202 BY: " << studentName << endl;
+		while(SqTCount <= HOW_MANY)
+		{
+			triNum = (count*(count+1))/2;
+			rootOfTri = sqrt(triNum);
+			if((rootOfTri*rootOfTri) == triNum)
+			{
+				cout << "Square Triangular Number " << SqTCount << " is: "
+					 << triNum << endl;
+				count++;
+				SqTCount++;
+			}
+			else
+			{
+				count++;
+			}	
+		}
+		return 0;
+}

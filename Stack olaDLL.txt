@@ -1,0 +1,122 @@
+***Pointer-based dummy-headed circular singly-linked list implementation.  ***
+
+Below is a picture of my output in the terminal vs. the correct output. It seems as though I am not inserting the values into the list. This should be a simple enough task, but I can't seem to wrap my head around it when it comes to actually writing the function correctly, I've tried a number of different ways, all which make sense TO ME, but no success; so I am asking for help. 
+ 
+Although my problem is likely the Insert function itself; it does call the locateNode Function I wrote, and so i've included both headers, and both functions for you to take a look at. Any thoughts, found errors, or correct implementations, are all greatly appreciated!!! I've never had to write an original post before because this site has been so helpful with answers in the past. 
+
+Thank you so much for your time!!!  
+https://imgur.com/a/XyicY     
+
+***---> 'Insert() Header' --->***  
+void Insert(ItemType newItem, bool& success);  
+	//   -----------------------IN------------------OUT----------  
+
+	// Inserts newItem into its proper sorted position in a sorted   
+	// list.  Duplicates are not allowed and attempts to insert  
+	// duplicates should be unsuccessful.  The success flag indicates  
+	// whether the insertion was successful.  
+	// Pre:  newItem is defined.
+	// Post: If insertion is successful, newItem is in its proper  
+	//   sorted position in the list and success is true; otherwise 
+	//   success is false. 
+
+***--->My Insert Function--->***  
+void SortedList::Insert(ItemType newItem, bool& success)  
+//---------------------------------------IN----------------OUT  
+{  
+//*Declarations*  
+	int position;  
+	tNodePtr previous;  //New pointer of tNodePtr Class  
+	bool isPresent;  
+
+	tNodePtr newPtr;		//<--Creates new pointer.
+	newPtr = new tNode;   //<--Directs it toward: 'new tNode'.
+	isPresent = locateNode(newItem, previous, position);
+
+		if (isPresent && position>1)
+		{
+		
+			// No go: this would be a duplicate
+			//PushAvail(newItemSubscript); - - - - - - - - - - - OLA_ALL_VERSION
+			delete newPtr;
+			
+			success = false;
+		}
+		else			
+		{
+			
+		
+			//list[newItemSubscript].item = newItem; - - - - - - OLA_ALL_VERSION
+			newPtr->item = newItem;
+			//list[newItemSubscript].next = list[previous].next;-OLA_ALL_VERSION
+			newPtr->next = previous->next;
+			//list[previous].next=newItemSubscript;- - - - - - - OLA_ALL_VERSION
+			previous->next = newPtr;
+
+			++size;
+			success = true;
+		}
+} // end Insert
+***--->locateNode Header--->***  
+bool locateNode(ItemType anItem, tNodePtr& previous, int& position) const;    
+//-------------------------------IN------------------OUT----------------- OUT---
+  
+	// Returns true if anItem exists in the list, a pointer to the previous  
+	// (i.e., predecessor) node in the list and and anItem's list position.  
+	// Returns false if anItem is not in the list and a pointer to what would  
+	// have been the previous node if anItem had been in the list; the value  
+	// of position is that of what anItem's would have been if it were in the  
+	// list.  
+	// Pre:  anItem is defined.  
+	// Post: See above.  Note that the value of position lies in the range  
+	// 1 <= position <= Length()+1. The pointer "previous" points to  
+	// the last node on the list whose value was less than that of  
+	// anItem or to the dummy node if the position==1.  
+***My locate Node Function***  
+bool SortedList::locateNode  
+    (ItemType anItem, tNodePtr& previous, int& position) const  
+//------------IN----------------------OUT--------------- OUT-------
+    
+{  
+//*Declarations*  
+	position = 1;  
+	tNodePtr curPtr = head->next;  
+	previous = head;  
+	int countToPosition = 1; //Using to count each node until anItem is found -will return position in the //list   
+						
+	
+	if(head->next == head)			 //IF:The list is empty.
+	{
+		
+	}
+	else if (anItem == curPtr->item) //ELSE IF:Found at position 1 in the list.
+	{
+		
+	}
+	else                             //ELSE:Continue to search until it's found.
+	{
+		//Traverse the list until 'curPtr' circles back to head/anItem is found.
+		while(curPtr != head && anItem >= curPtr->item)
+		{
+			if(anItem==curPtr->item) //IF:'anItem' is found!
+			{
+			//	position = countToPosition; //RETURN POSITION.
+	
+				return true;				//RETURN TRUE.
+			}
+			
+			previous = curPtr;          	//Continue traversing.
+			curPtr = curPtr->next;
+			++countToPosition;				//Increment position Count.
+		}
+									 //IF:anItem is not in the list.
+										
+		position = countToPosition;     //Return position that would have been if 
+										//'anItem' were in the list.
+										
+		return false;					//RETURN FALSE.
+
+	// Returns false  and a pointer to what would
+	// have been the previous node if anItem had been in the list; 
+	}
+} // end locateNode

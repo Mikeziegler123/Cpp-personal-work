@@ -1,0 +1,369 @@
+cla22
+
+5981 ranger2$ cat ZieglerEx10.log
+Script started on Thu Apr 12 21:10:31 2018
+$ 
+$ c++ inlab12b.cc inlab12b.h main12.cc
+$ 
+$ a.out
+Enter a line of text.
+radar
+The string is a Palindrome!
+
+$ 
+$ 
+$ a.out
+Enter a line of text.
+deed
+The string is a Palindrome!
+
+$ 
+$ 
+$ 
+$ a.out
+Enter a line of text.
+able was I ere I saw elba
+The string is a Palindrome!
+
+$ a.out
+Enter a line of text.
+tacocat
+The string is a Palindrome!
+
+$ 
+$ a.out
+Enter a line of text.
+racecar racecar racecar racecar
+The string is a Palindrome!
+
+$ a.out
+Enter a line of text.
+tacocat tacocat tacocat tacocat
+The string is a Palindrome!
+
+$  
+$ 
+$ 
+$ 
+$ cat main12.cc
+// File:	   main12.cc
+//
+// This program demonstrates how a stack works.  It uses a stack to reverse
+// a string of characters.  The characters are pushed onto the stack in the
+// order they are read, and then printed in the order they are popped back
+// off.  A stack is not needed for such a simple problem, but the simplicity
+// allows the student to focus on the stack.
+//
+// The main program prompts the user for a string, and then reads one char
+// at a time and pushes it onto the stack.  When this is finished, the 
+// characters are printed in the order that they are popped off of the stack.
+// Stack elements are characters
+
+#include "inlab12a.h"
+#include <iostream>
+using namespace std;
+
+int main()
+{
+	Stack charStack;   //a stack which will hold characters
+	char ch;		   //a single input character
+	char ar[200];
+	int index = 0;
+	bool done = false;
+	// Tell cin not to skip whitespace.
+	cin.unsetf(ios::skipws);  
+	
+	// Get a string from the user and push it onto the stack one
+	// char at a time.
+	cout << "Enter a line of text." << endl;		
+	
+	while(cin>>ch && ch!='\n')
+	{
+		charStack.push(ch);
+		ar[index] = ch;
+		index++;
+	}
+		index = 0;
+		while(!charStack.empty() && !done)
+		{
+			ch = charStack.pop();
+			if(ar[index] == ch)
+			{
+				++index;
+			}
+				else
+					done = true;
+		}
+		if(done)
+		{
+			cout<< "The string isn't a palindrome." <<endl;
+		}
+		else
+		{
+			cout<< "The string is a Palindrome!" << endl;
+		}	
+			
+	//Print amount of Items in Stack.
+	//int num = charStack.numOnStack();
+	//cout<< endl <<"Items in Stack: " << num <<endl;
+	cout << endl;
+
+
+	return 0;
+}
+
+//PALINDROME FUNCTION NOTES:
+//push each letter of the string on a stack.  Also place the character
+//into a character array, say str.
+//		Set j = 0 and done = false
+//		While the stack is not empty and not(done)
+//    		 pop a character, say ch
+//    		 if str[j] == ch then 
+//     		   increment j and continue
+//   		  else set done to true (the string isn't a palindrome)
+//		if done is true
+//  		 the string isn't a palindrome
+//		else it is.
+
+//The first part of main12.cc needs to be modified slightly. 
+//It already reads a string and pushes it on a stack.
+  
+//The string also needs to be saved in a character array.
+  
+//Modify the  program to correspond with the algorithm above.  
+
+//Turn in a listing, compile and run of this modified program. 
+
+//Test your program with the strings listed above and with a string 
+//which is not a palindrome to demonstrate that it works.
+
+
+$ exit
+exit
+
+Script done on Thu Apr 12 21:12:40 2018
+5982 ranger2$ 
+5982 ranger2$ 
+5982 ranger2$ 
+5982 ranger2$ 
+5982 ranger2$ 
+5982 ranger2$ ls
+ZieglerEx10.log      a.out        inlab12a.h      inlab12b.cc  inlab12b.h.gch
+ZieglerLab12Ex9.log  inlab12a.cc  inlab12a.h.gch  inlab12b.h   main12.cc
+5983 ranger2$ cat ZieglerLab12Ex9.log
+Script started on Tue Apr 10 15:07:53 2018
+$      
+$ c++ inlab12b.h inlab12b.cc main12.cc
+$ 
+$ a.out
+Enter a line of text.
+Hello
+
+Items in Stack: 5
+olleH
+$ 
+$ 
+$   
+$ 
+$ cat inlab12b.cc
+//File:	   inlab12b.cc
+//
+//This file contains the implementation of the stack class.  A linked
+//list is used as the stack representation.
+
+#include <cstdlib>
+#include <iostream>
+#include "inlab12b.h"
+using namespace std;
+
+//The constructor for the class sets the top pointer to NULL.
+Stack::Stack()
+{top = NULL;}   
+
+//The destructor pop's elements from the stack until it is empty.
+Stack::~Stack()
+{
+	DataType item;
+	while (!empty())
+		item = pop();
+}
+		
+// This function pushes a data item onto the stack.
+void Stack::push(DataType item)
+{
+
+	//Code for Exercise 5 should appear here.  The data field of
+	//the new node should be loaded with the incoming item and
+    // the new node should be placed at the top of the stack
+	//EXERCISE 7 PUSH FUNCTION COMPLETION
+	NodePtr newNode = new StackNode;
+	newNode->data = item;
+	newNode->next = top;
+	top = newNode;
+}
+
+// This function pops a data item off of  the stack.  If the stack is empty
+// the program generates an error condition and the program is exited
+DataType Stack::pop()
+{
+	DataType item;        //data to be returned
+	NodePtr topNode;      //Pointer to the top node to be deleted
+
+	//If the stack is empty, exit the program. 
+	if( empty())
+	{	 
+		cerr << "Attempt to pop an empty stack! " << endl;
+		exit(1);
+	}
+    
+	//the stack wasn't empty so delete the node 
+	topNode = top;
+	top = top->next;	
+	item = topNode->data;
+	delete(topNode);
+	
+	return item;
+}
+
+// This function returns TRUE if the stack is empty, FALSE otherwise.
+bool Stack::empty()
+{
+	return top == NULL;
+}
+
+//EXERCISE 8: LINKED LIST numOnStack function.
+// Returns the number of elements in the stack.
+int Stack::numOnStack()
+{
+	NodePtr current, previous;
+	int num = 0;
+	current = top;
+	while(current!= NULL)
+	{ 
+		++num;
+		previous = current;
+		current = current->next;
+	}
+	return num;
+}
+$  
+$ 
+$ 
+$ 
+$ 
+$ 
+$ cat main.cc
+cat: main.cc: No such file or directory
+$ cat main12.cc
+// File:	   main12.cc
+//
+// This program demonstrates how a stack works.  It uses a stack to reverse
+// a string of characters.  The characters are pushed onto the stack in the
+// order they are read, and then printed in the order they are popped back
+// off.  A stack is not needed for such a simple problem, but the simplicity
+// allows the student to focus on the stack.
+//
+// The main program prompts the user for a string, and then reads one char
+// at a time and pushes it onto the stack.  When this is finished, the 
+// characters are printed in the order that they are popped off of the stack.
+// Stack elements are characters
+
+#include "inlab12a.h"
+#include <iostream>
+using namespace std;
+
+int main()
+{
+	Stack charStack;   //a stack which will hold characters
+	char ch;		   //a single input character
+	
+	// Tell cin not to skip whitespace.
+	cin.unsetf(ios::skipws);  
+	
+	// Get a string from the user and push it onto the stack one
+	// char at a time.
+	cout << "Enter a line of text." << endl;		
+	while(cin>>ch && ch!='\n')
+		charStack.push(ch);
+
+	
+	//Exercise 5
+	int num = charStack.numOnStack();
+	cout<< endl <<"Items in Stack: " << num <<endl;
+	
+	//Finish the algorithm by adding code to pop a 
+	//character at a time and print them in the order they
+	//are popped.
+	while(!charStack.empty())
+	{
+	ch = charStack.pop();
+	cout<< ch;
+	}
+
+	
+	
+	//Exercise 3 should be placed here!
+
+	cout << endl;
+	
+	return 0;
+}
+
+$ 
+$ 
+$ 
+$ 
+$ 
+$ 
+$ 
+$ 
+$ cat inlab12b.h
+// File:	  inlab12b.h 
+//
+//This file contains the stack class definition.  The stack is 
+//implemented using a linked list.
+
+
+#ifndef STACK_CLASS_H
+#define STACK_CLASS_H
+
+//the type of data is character
+typedef char DataType;
+
+//a node in the stack is defined
+struct StackNode		   
+{
+		DataType data;
+		StackNode *next;
+};
+
+typedef StackNode* NodePtr;   //pointer to a node
+
+class Stack
+{
+	private:
+		//private data members - a pointer to the top node
+		NodePtr top;	   
+	public:
+		//constructor which initializes the top
+		Stack();
+
+		//destructor
+		~Stack(); 
+		
+		//stack modification operations
+		void push (DataType item);
+		DataType pop();
+		int numOnStack();
+
+		//stack test methods
+		bool empty();
+};
+#endif
+$ 
+$ 
+$ 
+$ exit
+exit
+
+Script done on Tue Apr 10 15:09:48 2018

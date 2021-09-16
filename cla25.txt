@@ -1,0 +1,261 @@
+cla25
+
+
+//File:   inlab13.cc
+//
+//This file contains the implementation of a Queue class using a linked list.
+
+#include <iostream>
+#include <cstdlib>
+#include "inlab13.h"
+using namespace std;
+
+// This is the default constructor.
+Queue::Queue()
+{
+    frontPtr = NULL;
+    rearPtr  = NULL;
+} // end default constructor
+
+//qEmpty tests for an empty queue.
+int Queue::qEmpty() const
+{
+    return  frontPtr == NULL;
+} // end qEmpty
+
+// This function takes the front element off of the queue.  It assumes 
+// that the queue is not empty.  Call 'qEmpty()' before calling this 
+// function to ensure that this is the case.
+DataType Queue::dequeue()
+{
+// This is exercise 6 **************************************
+	if(!qEmpty())
+	{
+		NodePtr dangPtr = frontPtr;
+		frontPtr = frontPtr->next;
+		
+		delete dangPtr;
+	}
+// End exercise 6 ****************************************
+
+} // end enqueue
+
+// This function adds an element to the rear of the queue.  
+void Queue::enqueue(const DataType&  item)
+{
+    NodePtr newPtr = new QueueNode;
+    newPtr->data = item;
+    newPtr->next = NULL;
+    
+    if (qEmpty())      //Was the queue empty?
+    {
+        frontPtr = newPtr;
+        rearPtr = newPtr; 
+    }
+    else
+    {
+        rearPtr->next = newPtr;
+        rearPtr = newPtr;
+    }
+} // end enqueue
+5989 ranger2$ 
+5989 ranger2$ 
+5989 ranger2$ 
+5989 ranger2$ 
+5989 ranger2$ cat main13.cc
+// File:      main13.cc
+//
+// This program manipulates a queue of random real numbers.
+
+#include <cstdlib>
+#include <ctime>     // *** new, replaces next line
+// #include <unistd.h>  *** UNIX specific
+#include <iostream>
+#include "inlab13.h"
+using namespace std;
+
+//Function:    floatRand()
+// This function generates a random floating point number.  It calls 
+// the standard library function 'rand()' to get an int between 0 and
+// RAND_MAX and divides it by RAND_MAX to get a float between 0 and 1.
+inline
+float floatRand()
+{
+    return ( ((float)rand()) / ((float)RAND_MAX) );  
+} // end floatRand
+
+int main(void)
+{
+    float item;
+    Queue q;
+    int qLength, maxLength;  // added for exercise 7
+    int total;  // added for exercise 8
+
+    // Initialize the random number generator.
+      srand((unsigned)time(NULL));  // srand(0) would make results easier to grade
+//    srand((int) getpid());   // *** replaced by above non-UNIX-specific line
+
+// loop and total for exercise 8      
+    total = 0;
+    for (int testRun = 0; testRun < 25; testRun++)
+    {    
+      // Generate 100 random floats between 0 and 1.  If the number
+      // is less than 0.5, it is put into the queue.  If the number 
+      // is 0.5 or greater, a number is removed from the queue.
+      qLength = 0;
+      maxLength = 0;
+
+      for (int i=0; i<100; ++i)
+      {
+          item = floatRand();
+          if (item < 0.5)
+          {
+            q.enqueue(item);
+            // need to add two lines for exercise 7
+			item = newitem;
+			qLength++;
+			maxLength++;
+          }
+          else
+          {
+            if (!q.qEmpty())
+            {
+              item = q.dequeue();
+              // need to add one line for exercise 7 
+			  qLength--;
+			}
+          }
+      }
+      
+      // need to add one line for exercise 7 for printing 
+	  cout << maxLength << endl;
+      // need to add one line for exercise 8 for calculating total
+      
+      while(!q.qEmpty())item = q.dequeue();   // clear out queue
+    }
+    // add one line for exercise 8 so as to print average maxiumum length
+	
+    return 0;
+} // end main
+5990 ranger2$ 
+5990 ranger2$ 
+5990 ranger2$ 
+5990 ranger2$ 
+5990 ranger2$ lsx
+bash: lsx: command not found
+5991 ranger2$ 
+5991 ranger2$ ls
+Zieglercla25.log  cla25       inlab13.h      main13.cc
+a.out             inlab13.cc  inlab13.h.gch  typescript
+5992 ranger2$ cat inlab13.h 
+//File:    inlab13.h
+//
+//This file contains the definition of the queue class implemented using
+//an anchored singly linked list and two list pointers.
+
+#ifndef QUEUE_CLASS_H
+#define QUEUE_CLASS_H
+
+typedef float DataType;       //the data type is float
+
+struct QueueNode              //a node in the Queue has this structure
+{
+    DataType data;
+    QueueNode* next;
+};
+
+typedef QueueNode* NodePtr;   //pointer to a node in the Queue
+
+
+class Queue
+{
+public:
+    // default constructor
+    Queue();
+       
+    //queue test method
+    int qEmpty() const;
+
+    // queue access methods 
+    DataType dequeue();
+    void enqueue(const DataType& elt);
+            
+private:
+    // a linked list object to hold the queue items
+  NodePtr frontPtr, rearPtr;
+};
+#endif
+
+5993 ranger2$ 
+5993 ranger2$ 
+5993 ranger2$ 
+5993 ranger2$ ls
+Zieglercla25.log  cla25       inlab13.h      main13.cc
+a.out             inlab13.cc  inlab13.h.gch  typescript
+5994 ranger2$ cat Zieglercla25.log
+Script started on Wed Apr 25 18:08:05 2018
+$ 
+$ 
+$ cat inlab13.cc
+//File:   inlab13.cc
+//
+//This file contains the implementation of a Queue class using a linked list.
+
+#include <iostream>
+#include <cstdlib>
+#include "inlab13.h"
+using namespace std;
+
+// This is the default constructor.
+Queue::Queue()
+{
+    frontPtr = NULL;
+    rearPtr  = NULL;
+} // end default constructor
+
+//qEmpty tests for an empty queue.
+int Queue::qEmpty() const
+{
+    return  frontPtr == NULL;
+} // end qEmpty
+
+// This function takes the front element off of the queue.  It assumes 
+// that the queue is not empty.  Call 'qEmpty()' before calling this 
+// function to ensure that this is the case.
+DataType Queue::dequeue()
+{
+// This is exercise 6 **************************************
+	if(!qEmpty())
+	{
+		NodePtr dangPtr = frontPtr;
+		frontPtr = frontPtr->next;
+		
+		delete dangPtr;
+	}
+// End exercise 6 ****************************************
+
+} // end enqueue
+
+// This function adds an element to the rear of the queue.  
+void Queue::enqueue(const DataType&  item)
+{
+    NodePtr newPtr = new QueueNode;
+    newPtr->data = item;
+    newPtr->next = NULL;
+    
+    if (qEmpty())      //Was the queue empty?
+    {
+        frontPtr = newPtr;
+        rearPtr = newPtr; 
+    }
+    else
+    {
+        rearPtr->next = newPtr;
+        rearPtr = newPtr;
+    }
+} // end enqueue
+$ 
+$ exit
+exit
+
+Script done on Wed Apr 25 18:08:27 2018

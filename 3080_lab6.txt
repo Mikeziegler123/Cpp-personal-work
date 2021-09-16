@@ -1,0 +1,68 @@
+3080_lab6
+
+/* Author:  Michael Ziegler
+ * Course:  CSCI 3080
+ * Lab number: Lab 6 / Code: ola6 / Source: main.cpp
+ * 
+ * This program is a finite state machine recognizer that
+ * that uses a table lookup to read a single character 
+ * at a time before changing state, and reading the
+ * following character.
+ *
+ * Data will be redirected from a file - containing
+ * a single line of input(without spaces) until reaching
+ * an empty string. 
+ * 
+ * Due date: May 2, 2018 before 11:59pm
+ */
+ 
+
+#include <iostream>
+using namespace std;
+
+// Initialize Lookup Table/Notes.   
+/*     lookTable Index:  S  a  b  O  X */               
+int lookTable[6][6] = { {0, 1, 2, 0, 0},
+					    {1, 1, 3, 0, 1},			 
+						{2, 4, 2, 0, -1},
+						{3, 4, 2, 0, -1},
+						{4, 0, 5, 1, -1},
+						{5, 0, 0, 0, -1} };
+/*  S:Present State  ,  O:Output  ,  X:Special Cases('/n', S1:1|0)  */
+
+int main()
+{
+	int state = 0; 
+	char ch, prev; 
+	bool flag = true;
+
+
+	while(ch != '\n') 
+	{
+		prev = ch;
+		cin.get(ch);
+
+		if(flag==true)
+		{
+			cout << state;
+			flag = false;
+		}
+		if(ch == 'a')
+		{
+			if(state == 1)
+				cout << lookTable[state][3];
+			else
+			cout << lookTable[state][3];
+			state = lookTable[state][1];
+		}
+		if(ch == 'b')
+		{
+			if(state == 1)
+				cout << lookTable[state][4];
+			else
+			cout << lookTable[state][3];
+			state = lookTable[state][2];
+		}	
+	}
+	cout<< endl;
+ }

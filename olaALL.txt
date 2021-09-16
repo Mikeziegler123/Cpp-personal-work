@@ -1,0 +1,911 @@
+olaALL
+
+// ID:  ALL.cpp / Implementation file for the class SortedList
+// RCS:  $Revision: 1.1 $ $Date: 04/05/2018 17:21:23 $
+// AUTHOR:  Michael Ziegler :D
+// INSTALLATION:  MTSU
+// REMARKS:  Implementation file for the class SortedList.
+// Array-based linked list implementation.
+
+#include "ALL.h"
+#include <iostream>
+using namespace std;
+
+const int NONE = -1;     // Sentinel value indicating "no item"
+
+
+// Constructors and Destructor:
+
+SortedList::SortedList() : size(0), avail(1)
+{
+	// Initialize "dummy" node (list[0])
+	list[0].next = NONE;
+
+	// Create "avail" list of empty (i.e., available) nodes
+	for (int subscript=avail; subscript<=MAX_LIST-1; ++subscript)
+		list[subscript].next = subscript+1;
+	list[MAX_LIST].next = NONE;
+} // end (default) constructor
+
+
+SortedList::SortedList(const SortedList& listArg): size(listArg.size), avail(listArg.avail)
+//                     IN
+{
+	// NOTE:  Because all the nodes (used and avail) have necessary
+	// information in them, everything must be copied.
+
+	for (int subscript = 0; subscript <= MAX_LIST; ++subscript)
+		list[subscript] = listArg.list[subscript];
+} // end copy constructor
+
+
+SortedList::~SortedList()
+{
+	// NOTE:  This is just "placeholder" code.  The array implementation
+	// of SortedList does not really need a destructor.
+} // end destructor
+
+
+
+// List Operations:
+
+bool SortedList::IsEmpty() const
+{
+	return (size == 0);
+} // end IsEmpty
+
+
+int SortedList::Length() const
+{
+	return size;
+} // end Length
+
+
+void SortedList::Insert(ItemType newItem, bool& success)
+//                      IN                OUT
+{
+	int previous, newItemSubscript, position;
+	bool isPresent;
+
+	newItemSubscript = PopAvail();
+	if (newItemSubscript == NONE)
+		success = false;
+	else
+	{
+		isPresent = locateNode(newItem, previous, position);
+
+		if (isPresent)
+		{
+			// No go: this would be a duplicate
+			PushAvail(newItemSubscript);   // return unused slot
+			success = false;
+		}
+		else
+		{
+			list[newItemSubscript].item = newItem;
+			list[newItemSubscript].next = list[previous].next;
+			list[previous].next = newItemSubscript;
+
+			++size;
+			success = true;
+		}
+	}
+} // end Insert
+
+
+void SortedList::Remove(ItemType anItem, bool& success)   
+//                      IN               OUT
+{
+	bool isFound;
+	int target;
+	int previous;
+	int position;
+
+	isFound = locateNode(anItem, previous, position);
+
+	if (isFound)
+	{
+		// Redirect the "previous node's NEXT", making it point to the
+		// node following-the node we're about to remove (target).
+		target = list[previous].next;
+		list[previous].next =  list[target].next;
+		
+		//Send the [subscript] of the Node we are removing - to PushAvail
+		//function, for adding to the avail list
+		PushAvail(target);
+		
+		//Adjust the size of the list, after removal.
+		--size;
+		
+		success = true;
+	}
+	
+	else
+	{
+		success = false;
+	}
+
+} // end Remove
+
+
+
+int SortedList::Find(ItemType anItem) const
+//	                 IN
+{
+	int previous, position;
+
+	bool isPresent = locateNode(anItem, previous, position);
+	
+	return  (isPresent) ? position : NONE;
+} // end Find
+
+
+void SortedList::Retrieve(
+    int position, ItemType& dataItem, bool& success) const
+//	IN            OUT                 OUT
+{
+	success = position>=1 && position<=Length();
+
+	if (success)
+	{
+		int current = list[0].next;
+		for (int count = 1; count<position; ++count)
+		current = list[current].next;
+		dataItem = list[current].item;
+	}
+} // end Retrieve
+
+
+int SortedList::PopAvail()
+{
+	int subscript = avail;
+
+	if (subscript == NONE)
+		return NONE;
+	else
+	{
+		avail = list[subscript].next;
+		return subscript;
+	}
+} // end PopAvail
+
+
+void SortedList::PushAvail(int subscript)
+//                         IN
+{
+	list[subscript].next = avail;
+	avail = subscript;
+} // end PushAvail
+
+
+bool SortedList::locateNode(
+	ItemType anItem, int& previous, int& position) const
+	     //  IN               OUT            OUT
+{
+	position = 1;
+	int current = list[0].next;
+	previous = 0;
+	
+	//Traverse the List until anything <= anitem triggers the stop.
+	while((position <= size && list[current].item < anItem))
+	{
+		previous = current;
+		current = list[current].next;
+		position++;
+		cout<< "list[current].item: " << list[current].item << "anitem: " << anItem << endl;
+
+	}
+	//Check current item to see if it matches anitem.
+	if(list[current].item == anItem)
+		return true; 
+	else 
+		return false;  
+}
+//  End locateNode
+
+//  End of implementation file.
+
+5843 ranger2$ 
+5843 ranger2$ 
+5843 ranger2$ 
+5843 ranger2$ 
+5843 ranger2$ 
+5843 ranger2$ 
+5843 ranger2$ 
+5843 ranger2$ 
+5843 ranger2$ 
+5843 ranger2$ ls
+ALL.cpp  ALLtester.o  SLC.o                 makefile  orgALL.cpp
+ALL.h    SLC.cpp      SLCtester.o           olaALL
+ALL.o    SLC.h        SortedListTester.cpp  olaSLC
+5844 ranger2$ cd ALL.h
+bash: cd: ALL.h: Not a directory
+5845 ranger2$ cat ALL.h
+// ID:  ALL.h / Header file for the class SortedList
+// RCS:  $Revision$
+// AUTHOR:  CSCI 2170 UNTCH
+// INSTALLATION:  MTSU
+// REMARKS:  Class and type definitions for the SortedList.
+//   Items are in strict ascending order; duplicates are not allowed.
+//   Array-based linked list implementation.
+
+
+
+#ifndef ALL_h_  // To prevent problems from multiple inclusions
+#define ALL_h_
+
+typedef int ItemType;     // data type of list items
+
+
+class SortedList
+{
+public:
+
+	// Constructors and Destructor:
+
+	SortedList();                           // (default) constructor
+	SortedList(const SortedList& listArg);  // copy constructor
+	~SortedList();                          // destructor
+
+
+	// List Operations:
+
+	bool IsEmpty() const;
+	// Determines whether a sorted list is empty.
+	// Pre:  None.
+	// Post: Returns true if list is empty, otherwise returns false.
+
+	int Length() const;
+	// Returns the number of items that are in a sorted list.
+	// Pre:  None.
+	// Post: Returns the number of items currently on the list.
+
+	void Insert(ItemType newItem, bool& success);
+	//          IN                OUT
+	// Inserts newItem into its proper sorted position in a sorted 
+	// list.  Duplicates are not allowed and attempts to insert
+	// duplicates should be unsuccessful.  The success flag indicates
+	// whether the insertion was successful.
+	// Pre:  newItem is defined.
+	// Post: If insertion is successful, newItem is in its proper
+	//   sorted position in the list and success is true; otherwise 
+	//   success is false.  
+
+	void Remove(ItemType anItem, bool& success);
+	//          IN               OUT
+	// Deletes anItem from a sorted list.  The success flag indicates
+	// whether the deletion was successful.
+	// Pre:  anItem is defined.
+	// Post: If anItem was in the sorted list, it is removed and
+	//   success is true; otherwise success is false.
+
+	int Find(ItemType anItem) const;
+	//                IN
+	// Returns the position (in the range 1<= position<= Length()) where
+	// anItem exists in a sorted list or -1 if anItem is not in the list.
+	// Pre:  anItem is defined.
+	// Post: Returns the position in the sorted list where anItem resides
+	//   or -1 if anItem is not in the sorted list.
+	//   The item anItem and the list are unchanged.
+
+	void Retrieve(int position, ItemType& dataItem, bool& success) const;
+	//            IN            OUT                 OUT
+	// Sets dataItem to the item at "position" of the sorted list.
+	// The success flag indicates whether the retrieval was successful.
+	// Pre:  position is defined and is the number of the item to be retrieved.
+	// Post: If 1 <= position <= Length(), then dataItem is the value
+	//   of the desired item and success is true; otherwise success is
+	//   false.  The list is left unchanged by this operation.
+
+
+private:
+	struct tNode
+	{
+		ItemType  item;
+		int       next;
+	};
+
+	const static int MAX_LIST = 20; // maximum length of list
+
+	tNode         list[MAX_LIST+1]; // structured array of list items
+	int           avail;            // index of next available slot
+	int           size;             // number of items on list
+
+	int PopAvail();
+	// Returns subscript (or NONE) of the next available list array slot.
+	
+	void PushAvail(int subscript);
+	//             IN
+	// Put slot "list[subscript]" back into the list of available slots.
+	// Pre:  avail has been properly set.
+	// Post: Updates avail and maintains available list properly.
+
+	bool locateNode(ItemType anItem, int& previous, int& position) const;
+	//              IN               OUT            OUT
+	// Returns true if anItem exists in the list, the subscript of the previous
+	// node and and anItem's position in the list.  Returns false if anItem is
+	// not in the list and the subscript of what would have been the previous
+	// node if anItem had been in the list; the value of position is that
+	// of what anItem's would have been if it were in the list.
+	// Pre:  anItem is defined.
+	// Post: See above.
+
+}; // end SortedList class
+
+#endif
+5846 ranger2$ 
+5846 ranger2$ 
+5846 ranger2$ 
+5846 ranger2$ 
+5846 ranger2$ 
+5846 ranger2$ 
+5846 ranger2$ 
+5846 ranger2$ 
+5846 ranger2$ 
+5846 ranger2$ 
+5846 ranger2$ 
+5846 ranger2$ ls
+ALL.cpp  ALLtester.o  SLC.o                 makefile  orgALL.cpp
+ALL.h    SLC.cpp      SLCtester.o           olaALL
+ALL.o    SLC.h        SortedListTester.cpp  olaSLC
+5847 ranger2$ cat SLC.cpp
+// ID:  SLC.cpp / Implementation file for the class SortedList
+// RCS:  $Revision: 1.1 $ $Date: 2017/12/04 17:23:53 $
+// AUTHOR:  Michael Ziegler
+// INSTALLATION:  MTSU
+// REMARKS:  Implementation file for the class SortedList.
+//   Simple array-based list implementation.
+
+#include "SLC.h"
+
+
+// Constructors and Destructor:
+
+SortedList::SortedList() : size(0)
+{
+} // end (default) constructor
+
+
+SortedList::SortedList(const SortedList& listArg): size(listArg.size)
+//                     IN
+{
+	// NOTE:  The array implementation of SortedList does not require
+	// a user-defined copy constructor, but the system-supplied copy
+	// constructor would not be as efficient.
+
+	for (int pos = 1; pos <= listArg.size; pos++)
+		list[pos-1] = listArg.list[pos-1];
+} // end copy constructor
+
+
+SortedList::~SortedList()
+{
+	// NOTE:  This is just "placeholder" code.  The array implementation
+	// of SortedList does not really need a destructor.
+} // end destructor
+
+
+// List Operations:
+
+bool SortedList::IsEmpty() const
+{
+	return (size == 0);
+} // end IsEmpty
+
+
+int SortedList::Length() const
+{
+	return size;
+} // end Length
+
+
+void SortedList::Insert(ItemType newItem, bool& success)
+//                      IN                OUT
+{
+	bool isPresent;
+
+	int desiredPosition = locatePosition(newItem, isPresent);
+
+	if (isPresent || size>=MAX_LIST)
+		success = false;
+	else
+	{
+		// Make room for new item by shifting all items at
+		// positions >= desiredPosition toward the end of the
+		// list (no shift if desiredPosition == size+1)
+		for (int pos = size; pos >= desiredPosition; pos--)
+			list[pos] = list[pos-1];
+
+		// Insert new item.
+		list[desiredPosition-1] = newItem;
+		size++;
+
+		success = true;
+	}
+} // end Insert
+
+
+void SortedList::Remove(ItemType anItem, bool& success)
+//                      IN               OUT
+{
+	int lastPosition = Length();
+	int deletePosition = locatePosition(anItem, success);
+
+	if (success)
+	{
+		// Delete item by shifting all items at
+		// positions > deletePosition toward the beginning of the list.
+		// (No shift if deletePosition == lastPosition.)
+		for (int pos = deletePosition+1; pos <= lastPosition; pos++)
+			list[pos-2] = list[pos-1];
+		size--;
+	}
+} // end Remove
+
+
+int SortedList::Find(ItemType anItem) const
+//	                 IN
+{
+	bool isPresent;
+	int  position = locatePosition(anItem, isPresent);
+	return  (isPresent) ? position : -1;
+} // end Find
+
+
+void SortedList::Retrieve(
+    int position, ItemType& dataItem, bool& success) const
+//	IN            OUT                 OUT
+{
+	success = position>=1 && position<=Length();
+
+	if (success)
+		dataItem = list[position-1];
+} // end Retrieve
+
+
+int SortedList::locatePosition(ItemType anItem, bool& isPresent) const
+//	                           IN               OUT
+{
+	int position;   // position index
+
+	isPresent = false;
+	for (position = 1; position <= size; position++)
+	{
+		if (list[position-1] >= anItem)
+		{
+			if (list[position-1] == anItem)
+				isPresent = true;
+			break;
+		}
+	}
+	return position;
+} // end locatePosition
+
+
+//  End of implementation file.
+5848 ranger2$ 
+5848 ranger2$ 
+5848 ranger2$ 
+5848 ranger2$ 
+5848 ranger2$ 
+5848 ranger2$ 
+5848 ranger2$ 
+5848 ranger2$ 
+5848 ranger2$ 
+5848 ranger2$ 
+5848 ranger2$ 
+5848 ranger2$ 
+5848 ranger2$ cat SLC.h
+// ID:  SLC.h / Header file for the class SortedList
+// RCS:  $Revision$
+// AUTHOR:  CSCI 2170 UNTCH
+// INSTALLATION:  MTSU
+// REMARKS:  Class and type definitions for the SortedList.
+//   Items are in strict ascending order; duplicates are not allowed.
+//   Simple array-based list implementation.
+
+
+#ifndef SLC_h_  // To prevent problems from multiple inclusions
+#define SLC_h_
+
+
+typedef int ItemType;     // data type of list items
+
+
+class SortedList
+{
+public:
+
+	// Constructors and Destructor:
+
+	SortedList();                           // (default) constructor
+	SortedList(const SortedList& listArg);  // copy constructor
+	~SortedList();                          // destructor
+
+
+	// List Operations:
+
+	bool IsEmpty() const;
+	// Determines whether a sorted list is empty.
+	// Pre:  None.
+	// Post: Returns true if list is empty, otherwise returns false.
+
+	int Length() const;
+	// Returns the number of items that are in a sorted list.
+	// Pre:  None.
+	// Post: Returns the number of items currently on the list.
+
+	void Insert(ItemType newItem, bool& success);
+	//          IN                OUT
+	// Inserts newItem into its proper sorted position in a sorted 
+	// list.  Duplicates are not allowed and attempts to insert
+	// duplicates should be unsuccessful.  The success flag indicates
+	// whether the insertion was successful.
+	// Pre:  newItem is defined.
+	// Post: If insertion is successful, newItem is in its proper
+	//   sorted position in the list and success is true; otherwise 
+	//   success is false.  
+
+	void Remove(ItemType anItem, bool& success);
+	//          IN               OUT
+	// Deletes anItem from a sorted list.  The success flag indicates
+	// whether the deletion was successful.
+	// Pre:  anItem is defined.
+	// Post: If anItem was in the sorted list, it is removed and
+	//   success is true; otherwise success is false.
+
+	int Find(ItemType anItem) const;
+	//       IN
+	// Returns the position (in the range 1<= position<= Length()) where
+	// anItem exists in a sorted list or -1 if anItem is not in the list.
+	// Pre:  anItem is defined.
+	// Post: Returns the position in the sorted list where anItem resides
+	//   or -1 if anItem is not in the sorted list.
+	//   The item anItem and the list are unchanged.
+
+	void Retrieve(int position, ItemType& dataItem, bool& success) const;
+	//            IN            OUT                 OUT
+	// Sets dataItem to the item at "position" of the sorted list.
+	// The success flag indicates whether the retrieval was successful.
+	// Pre:  position is defined and is the number of the item to be retrieved.
+	// Post: If 1 <= position <= Length(), then dataItem is the value
+	//   of the desired item and success is true; otherwise success is
+	//   false.  The list is left unchanged by this operation.
+
+
+private:
+	const static int MAX_LIST = 20; // maximum length of list
+
+	ItemType  list[MAX_LIST];   // array of list items
+	int       size;             // number of items on list
+
+	int locatePosition(ItemType anItem, bool& isPresent) const;
+	//                 IN               OUT
+	// Returns the position where anItem belongs or exists in a sorted
+	// list.  The isPresent flag indicates whether anItem is currently
+	// in the list.
+	// Pre:  anItem is defined.
+	// Post: Returns the position in the sorted list where anItem resides
+	//   or, if anItem is not in the sorted list, where it would be if
+	//   inserted into the list;  the position lies in the range
+	//   1 <= position <= Length()+1.  If anItem exists
+	//   in the list, isPresent is true; otherwise isPresent is false.
+	//   The item anItem and the list are unchanged.
+
+}; // end SortedList class
+
+#endif
+5849 ranger2$ 
+5849 ranger2$ 
+5849 ranger2$ 
+5849 ranger2$ 
+5849 ranger2$ 
+5849 ranger2$ 
+5849 ranger2$ 
+5849 ranger2$ 
+5849 ranger2$ 
+5849 ranger2$ 
+5849 ranger2$ 
+5849 ranger2$ cat SortedListTester
+cat: SortedListTester: No such file or directory
+5850 ranger2$ ls
+ALL.cpp  ALLtester.o  SLC.o                 makefile  orgALL.cpp
+ALL.h    SLC.cpp      SLCtester.o           olaALL
+ALL.o    SLC.h        SortedListTester.cpp  olaSLC
+5851 ranger2$ cat SortedListTester.cpp
+// olaALL BY Michael Ziegler,  CSCI2170-002,  Due: 04/03/2018
+// PROGRAM ID:  SortedListTester.cpp / Illustration of using the SortedList
+// RCS:  $Revision$ $Date$
+// AUTHOR: Michael Ziegler
+// INSTALLATION:  MTSU
+// REMARKS:  Simple-minded driver for exercising the SortedList methods.
+// Original concept based on a variation of Carrano (5th Ed.), Chapter 3,
+// pp. 133-134.   NOTE: This program is not a comprehensive test program.
+//
+//  .    1    .    2    .    3    .    4    .    5    .    6    .    7    .
+//3456789012345678901234567890123456789012345678901234567890123456789012345
+                                                                        
+#include <iostream>
+using namespace std;
+
+#define MAXLOOP 50   // Maximum loop iterations terminator
+
+#if   defined DLL
+#include "DLL.h"     // Dynamic dummy-headed circular linked list
+#define OLA "olaDLL"
+#elif defined ALL 
+#include "ALL.h"     // Array storage dummy-headed linked list
+#define OLA "olaALL"
+#elif defined SLC
+#include "SLC.h"     // Simple array-based sorted list
+#define OLA "olaSLC"
+#else                // Default to "SLC":
+#include "SLC.h"     // Simple array-based sorted list
+#define OLA "olaSLC"
+#endif
+
+void DisplayList(SortedList List);
+
+
+int main()
+{
+	SortedList  L, LL, LLL;
+	ItemType    dataItem;
+	bool        success;
+	int         position;
+
+	cerr << endl << "Starting " << OLA << " testing:" << endl;
+
+	// Assign empty list L to empty list LL, thereby checking assignment
+	// and "deep copy" semantics; this assignment does not appear in
+	// the publicly-available SortedListClient.cc code
+	LL = L;
+
+	// Check initial status of list L.
+	if ( L.IsEmpty() )
+		cerr << "OKAY: List is initially empty." << endl;
+	else
+		cerr << "ERROR: IsEmpty() returning bad value." << endl;
+
+	// See what happens when you try to insert one item.
+	dataItem = 50;
+	L.Insert(dataItem, success);
+	if (success)
+		cerr << "OKAY: Insert operation (seemingly) succeeded." << endl;
+	else
+		cerr << "ERROR: Insert operation failed." << endl;
+	if ( L.IsEmpty() )
+		cerr << "ERROR: IsEmpty() returning bad value." << endl;
+	else
+		cerr << "OKAY: List is not empty anymore." << endl;
+	cerr << "Length of list = " << L.Length() << endl;
+
+	// See what happens when you try ...
+	// ...these extra instructor-supplied tests for grading
+
+	// Check initial status of list LL.
+	if ( LL.IsEmpty() )
+		cerr << "OKAY: List LL is initially empty." << endl;
+	else
+		cerr << "ERROR: LL.IsEmpty() returning bad value." << endl;
+
+	// Check initial status of list LLL.
+	if ( LLL.IsEmpty() )
+		cerr << "OKAY: List LLL is initially empty." << endl;
+	else
+		cerr << "ERROR: LLL.IsEmpty() returning bad value." << endl;
+
+	// See what happens when you try to retrieve an item.
+	L.Retrieve(1, dataItem, success);
+	if (success)
+	{
+		if (dataItem == 50)
+			cerr << "OKAY: List item #" << 1 << " is: " << dataItem << endl;
+		else
+			cerr << "ERROR: List item #" << 1 << " is: " << dataItem << endl;
+	}
+	else
+		cerr << "ERROR: Retrieve operation failed." << endl;
+	L.Retrieve(0, dataItem, success);
+	if (success)
+		cerr << "ERROR: Retrieve operation failed." << endl;
+	L.Retrieve(2, dataItem, success);
+	if (success)
+		cerr << "ERROR: Retrieve operation failed." << endl;
+
+	// Fill list L with a bunch of numbers.
+	L.Insert(25, success);
+	if (!success)
+		cerr << "ERROR: Insert operation failed." << endl;
+	L.Insert(80, success);
+	if (!success)
+		cerr << "ERROR: Insert operation failed." << endl;
+	L.Insert(10, success);
+	if (!success)
+		cerr << "ERROR: Insert operation failed." << endl;
+	L.Insert( 5, success);
+	if (!success)
+		cerr << "ERROR: Insert operation failed." << endl;
+	L.Insert(35, success);
+	if (!success)
+		cerr << "ERROR: Insert operation failed." << endl;
+	L.Insert(15, success);
+	if (!success)
+		cerr << "ERROR: Insert operation failed." << endl;
+	L.Insert(15, success);
+	if (success)
+		cerr << "ERROR: Invalid insert of duplicate succeeded." << endl;
+	for (int i = 1; i <= 9; i++)
+	{
+		L.Insert(i+100, success);
+		if (!success)
+			cerr << "ERROR: Insert operation failed." << endl;
+	}
+
+	// Display the items on the list L.
+	cerr << endl;
+	cerr << "DisplayList( L ): should list 16 items \n  "
+	  << "(starting with 5 and ending with 109):" << endl;
+	DisplayList( L );
+	cerr << endl;
+
+	// See what happens when you try to delete an item.
+	L.Remove(25, success);
+	if (!success)
+		cerr << "ERROR: Remove operation failed." << endl;
+	position = L.Find(5);
+	if (position!=1)
+		cerr << "ERROR: Find failed. Remove() error?" << endl;
+	position = L.Find(109);
+	if (position!=15)
+		cerr << "ERROR: Find failed. Remove() error?" << endl;
+	// Delete the first item.
+	L.Remove(5, success);
+	if (!success)
+		cerr << "ERROR: Remove operation failed." << endl;
+	// Delete the last item.
+	L.Remove(109, success);
+	if (!success)
+		cerr << "ERROR: Remove operation failed." << endl;
+	// Check that really gone.
+	position = L.Find(5);
+	if (position!=-1)
+		cerr << "ERROR: Find operation failed." << endl;
+	position = L.Find(109);
+	if (position!=-1)
+		cerr << "ERROR: Find operation failed." << endl;
+	// Check what happens with duplicates.
+	L.Remove(15, success);
+	if (!success)
+		cerr << "ERROR: Remove operation failed." << endl;
+	position = L.Find(15);
+	if (position!=-1)
+		cerr << "ERROR: Find found a duplicate." << endl;
+	L.Remove(15, success);
+	if (success)
+		cerr << "ERROR: Remove operation should have failed." << endl;
+	L.Remove(100, success);
+	if (success)
+		cerr << "ERROR: Remove operation should have failed." << endl;
+
+	{SortedList M;
+		M = L;
+		LLL = M;
+		// Display the items on the list M.
+		cerr << "DisplayList( M ): should list 12 items \n  " <<
+		  "(10, 35, 50, 80, 101, ..., 108):" << endl;
+		DisplayList( M );
+		cerr << endl;
+	}
+	
+	// Display the items on the list L.
+	cerr << "DisplayList( L ): should list 12 items \n  " <<
+	  "(10, 35, 50, 80, 101, ..., 108):" << endl;
+	DisplayList( L );
+	cerr << endl;
+
+	// See what happens when you try to delete ALL items.
+	cerr << "Should go from List Length = 11 down to 0:" << endl;
+	for ( int maxLoop=MAXLOOP; ! L.IsEmpty() && maxLoop>0; maxLoop--)
+	{
+		L.Retrieve(1,dataItem,success);
+		if (!success)
+		{
+			cerr << "ERROR: Retrieve operation failed." << endl;
+			break;
+		}
+		else
+		{
+			L.Remove(dataItem,success);
+			if (!success)
+				cerr << "ERROR: Delete operation failed." << endl;
+			cerr << "List Length = " << L.Length() << endl;
+		}
+	}
+
+	// Display the items on the list LLL.
+	cerr << endl;
+	cerr << "DisplayList( LLL ): should list 12 items \n  " <<
+	  "(10, 35, 50, 80, 101, ..., 108):" << endl;
+	DisplayList( LLL );
+
+	// ...end extra instructor-supplied tests for grading
+	
+	// Display the items on the list L.
+	cerr << endl << "Next line of output should say: End " << OLA << endl;
+	DisplayList( L );
+
+	cerr << "End " << OLA << endl;
+
+	return 0;
+} // end main
+
+
+void DisplayList(SortedList list)
+//               IN
+{
+	ItemType  dataItem;
+	bool      success;
+
+	// Display the items on the list.
+	int maxLoop=MAXLOOP;
+	for (int pos = 1; pos <= list.Length(); pos++)
+	{
+		list.Retrieve(pos, dataItem, success);
+		if (success)
+			cerr << "List item #" << pos << " is: " << dataItem << endl;
+		else
+			cerr << "ERROR: Retrieve operation failed." << endl;
+		if (--maxLoop==0)
+		{
+			cerr << "ERROR: Length() failed." << endl;
+			break;
+		}
+	}
+} // end DisplayList
+
+5852 ranger2$ ls
+ALL.cpp  ALLtester.o  SLC.o                 makefile  orgALL.cpp
+ALL.h    SLC.cpp      SLCtester.o           olaALL
+ALL.o    SLC.h        SortedListTester.cpp  olaSLC
+5853 ranger2$ 
+5853 ranger2$ 
+5853 ranger2$ 
+5853 ranger2$ 
+5853 ranger2$ 
+5853 ranger2$ 
+5853 ranger2$ 
+5853 ranger2$ 
+5853 ranger2$ cat makefile
+# makefile for "SortedListTester (olaALL & olaSLC)" program(s)
+# Michael Ziegler
+
+CXX = g++ -std=c++11
+CXXFLAGS = -pedantic -g
+
+
+# Create linked-list version (olaALL) of "SortedListTester" program
+olaALL:                ALLtester.o ALL.o
+	$(CXX) $(CXXFLAGS) ALLtester.o ALL.o -o olaALL
+
+ALLtester.o:                    SortedListTester.cpp ALL.h
+	$(CXX) $(CXXFLAGS) -c -DALL SortedListTester.cpp -o ALLtester.o
+
+ALL.o:                    ALL.cpp ALL.h
+	$(CXX) $(CXXFLAGS) -c ALL.cpp
+
+
+# Create simple array-based version (olaSLC) of "SLCtester" program
+olaSLC:                SLCtester.o SLC.o
+	$(CXX) $(CXXFLAGS) SLCtester.o SLC.o -o olaSLC
+
+SLCtester.o:                    SortedListTester.cpp SLC.h
+	$(CXX) $(CXXFLAGS) -c -DSLC SortedListTester.cpp -o SLCtester.o
+
+SLC.o:                    SLC.cpp SLC.h
+	$(CXX) $(CXXFLAGS) -c SLC.cpp
+
+
+# Remove object and executable files
+clean:
+	rm -f *.o olaDLL olaALL olaSLC 

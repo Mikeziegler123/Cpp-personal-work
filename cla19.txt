@@ -1,0 +1,259 @@
+cla19
+
+//File: inlab7a.cc
+//
+//This is a simple test program to test the 
+//store class.
+
+#include "storeClassa.h"
+
+
+int main()
+{
+	//create an instance of the store class
+	//add the declaration for store 1 using
+	//the default constructor here
+	
+
+	//read information about the store
+	store1.readFile ("ex3_data.0");
+
+	//print all information about the store
+	store1.PrintStore();
+
+	return 0;
+}
+5912 ranger2$ 
+5912 ranger2$ 
+5912 ranger2$ 
+5912 ranger2$ cat StoreClassa.cc
+cat: StoreClassa.cc: No such file or directory
+5913 ranger2$ cat storeClassa.cc
+//File: storeClassa.cc
+//
+//This is the implementation file for a store class.
+//Each store contains data members that contain 
+//information about chairs and tables sold by the store
+//as well as the name of the store.
+
+#include "storeClassa.h"
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <cstdlib>
+using namespace std;
+
+//This is the implementation of the default constructor.
+//The default constructor sets the name of the store
+//to a default name and sets the number of tables &
+//chairs to 0.
+StoreClass :: StoreClass()
+{
+	storeName = "General Store";
+	totalChairs = 0;
+	totalTables = 0;
+}
+
+//This method receives the name of the file containig
+//store data.  It reads all data about the store.
+//The data file contains the name of the store followed
+//by information about chairs and tables. If a chair's 
+//information appears in the file, it is preceeded by
+//the string "Chair".  If a table's information appears
+//in the file, it is preceeded by the string "Table".
+void StoreClass::readFile(string filename)
+{
+	string input;                 //input a string from the file
+	ifstream myFile;              //input file stream
+	totalChairs = 0;              //set the chair counter to 0
+	totalTables = 0;              //set the table counter to 0
+
+	//open the data file & check to make sure it opened
+	myFile.open(filename.c_str());
+	if (!myFile)
+	{
+		cerr << "Data file failed to open!\n";
+		exit (0);
+	}
+
+	//read the store's name
+	myFile >> input;
+
+	//check for an empty file
+	if(input!="")
+	{
+		//set the store's name
+		storeName = input;
+
+		//read in chairs & tables until end-of-file
+		//read the type of the next item
+		myFile >> input;
+		while(myFile)
+		{
+
+
+			//the next item is a chair
+			if(input == "Chair")
+			{
+				//create a Chair object and fill it with data
+				Chair chair1;            
+				myFile >> chair1.designer;
+				myFile >> chair1.color;
+				myFile >> chair1.material;
+				
+				//read a string to indicate whether the chair
+				//has a cushion or not
+				myFile >> input;
+				if(input == "true")
+				{
+					chair1.cushion = true;
+				}
+				else
+					chair1.cushion = false;
+				myFile >> chair1.qty;
+				
+				//place the chair into the array of chairs
+				chairArray[totalChairs] = chair1;
+				totalChairs +=1;
+			}
+			//the next item is a table
+			else if(input == "Table")
+			{
+				//create a Table object and fill it with data
+				Table table1;
+				myFile >> table1.designer;
+				myFile >> table1.color;
+				myFile >> table1.material;
+				
+				//read a string to indicate whether the table
+				//has glass or not
+				myFile >> input;
+				if(input == "true")
+				{
+					table1.glass = true;
+				}
+				else
+					table1.glass = false;
+				myFile >> table1.qty;
+				
+				//place the chair into the array of tables
+				tableArray[totalTables] = table1;
+				totalTables+=1;
+			}
+			//read the type of the next item
+			myFile >> input;
+
+		}
+	}
+}
+
+
+//This method prints all information about all tables
+//and chairs in the store.
+void StoreClass :: PrintStore()
+{
+	//print all information about Chairs sold by
+	//the store
+	if (totalChairs > 0)
+		cout << "Inventory of Chairs" << endl;
+	else
+		cout << "No chairs in Inventory" << endl;
+	for(int i = 0; i < totalChairs; i++)
+	{
+		cout << chairArray[i].designer <<"\t";
+		cout << chairArray[i].color << "\t";
+		cout << chairArray[i].material << "\t";
+		if(chairArray[i].cushion == true)
+			cout << "Cushioned\t" <<endl;
+		else
+			cout << "Not Cushioned\t" << endl;
+		cout << "Qty in Stock: " << chairArray[i].qty << endl;
+	}
+
+	//print all information about Tables sold by
+	//the store
+	if (totalTables > 0)
+		cout << "\n\nInventory of Tables" << endl;
+	else
+		cout << "\n\nNo tables in Inventory" << endl;
+	for(int i = 0; i < totalTables; i++)
+	{
+		cout << tableArray[i].designer <<"\t";
+		cout << tableArray[i].color << "\t";
+		cout << tableArray[i].material << "\t";
+		if(tableArray[i].glass == true)
+			cout << "Glass Top\t" <<endl;
+		else
+			cout << "No Glass Top\t" << endl;
+		cout << "Qty in Stock: " << tableArray[i].qty << endl;
+	}
+
+}
+5914 ranger2$ 
+5914 ranger2$ 
+5914 ranger2$ 
+5914 ranger2$ 
+5914 ranger2$ 
+5914 ranger2$ ls
+inlab7a.cc  storeClassa.cc  storeClassa.h
+5915 ranger2$ cat storeClass.h
+cat: storeClass.h: No such file or directory
+5916 ranger2$ cat storeClassa.h
+//File: storeClassa.h
+//
+//This is the specification file for a store class.
+//Each store contains data members that contain 
+//information about chairs and tables sold by the store
+//as well as the name of the store.
+
+#include <string>
+using namespace std;
+
+//prevent multiple inclusions
+#ifndef STORE_CLASS_H
+#define STORE_CLASS_H
+
+class StoreClass
+{
+public:
+	//You must declare the default constructor for the StoreClass.
+	// Constructor declaration goes here.
+	
+
+	//Read the data for a store from a file.  The name of the 
+	//file is passed as an argument to this method
+	void readFile (string filename);
+
+	//print information about the store
+	void PrintStore();
+
+private:
+	//define a struct for a Chair type
+	struct Chair
+	{
+		string designer;   //chair designer's name
+		bool cushion;      //does it have a cushion
+		string material;   //type of material used in the chair
+		string color;      //color of the chair
+		int qty;           //quantity of this chair
+	};
+
+	//define a struct for a Table type
+	struct Table
+	{
+		string designer;   //table designer's name
+		bool glass;        //does the chair have glass
+		string material;   //type of material used in the table
+		string color;      //table's color
+		int qty;           //quantity of this table
+	};
+
+	//data members in the store
+	Chair chairArray[100];  //the store contains many chairs
+	Table tableArray[100];  //and many tables
+	int totalTables;        //number of tables
+	int totalChairs;        //number of chairs
+	string storeName;       //name of the store
+};
+
+#endif

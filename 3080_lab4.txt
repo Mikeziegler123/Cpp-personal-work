@@ -1,0 +1,144 @@
+3080_lab4
+
+/* Author:  Michael Ziegler
+ * Course:  CSCI 3080
+ * Lab number: Lab 4 / Code: ola4 / Source: main.cpp
+ * 
+ * This program determines attributes of a graph
+ * based on an array-pointer representation of a graph. 
+ * Specifically, this program reads in the number of 
+ * nodes in the graph, reads in the number of rows 
+ * (no more than 20) in the array-pointer representation
+ * of the graph, reads in the array-pointer representation 
+ * of the graph, and then:
+ 
+ * creates the adjacency matrix then print it.
+ * print the nodes that are isolated
+ * print the degrees of each node
+ * print all nodes adjacent to each node
+ * 
+ * Due date:April 12, 2018 before 11:59pm
+*/
+
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+int main()
+{
+	//Declarations
+	int AP[20+1][2+1]={};
+	int AA[10+1][10+1] = {};
+    int i, j, k, count, sum;
+	int numNodes, numRows, currentRow, numCol, currentCol, iso, deg = 0;
+	//Assigns: from Standard-User-Input, numNodes, and numRows. 
+	cout << endl << "Please input the number of nodes: ";
+	cin >> numNodes;
+	
+	cout << "Please input the number of rows in the matrix: ";
+	cin >> numRows;
+	
+	cout << "Please input the array-pointer representation of the graph:"
+ << endl << endl;
+	
+	//Read-in: the array pointer representation (AP).
+	for(i = 1; i<numRows+1; i++)
+	{
+		
+cin >> AP[i][1] >> AP[i][2];
+	}
+
+	//Create the adjacency array (AA) from the array pointer (AP).
+	for(i = 1; i<numNodes; i++)
+	{
+		//Set current row to be what is in AP[i][2].
+		currentRow = AP[i][2];
+
+		//While the current row is not 0.
+		while(currentRow!=0)
+		{
+			//Set the current column to what is in AP[current row][1].
+			currentCol = AP[currentRow][1];
+			
+			//Set AA[i][current column] to 1.
+			AA[i][currentCol] = 1;
+	
+			//set current row to what is in AP[current row][2].
+			currentRow = AP[cur			rentRow][2];
+		}
+	}
+	//Displaying the adjacency matrix.
+    cout << endl << "The adjacency matrix is:" << endl;
+    for(i = 1; i < numNodes+1; i++)
+	{
+		for(j = 1; j < numNodes+1; j++)
+		{
+			cout << " " << AA[i][j];
+			if(j == numNodes)
+			{
+				cout << endl;
+			}
+		}
+	}
+	
+	//Displaying the number of isolated nodes.
+	cout << endl << endl << "The isolated nodes are: ";
+	count = 0;
+	for(i = 1; i < numNodes+1; i++)		//Iteration through Nodes(rows).
+	{ 
+		
+		deg = 0;
+		for(j = 1; j < numNodes+1; j++) //Iteration through each Column.
+		{
+			if(AA[i][j]==1)	
+			{
+				deg++;					
+			}
+		}
+		if(deg==0)
+		{
+			iso = i;
+			cout << iso;
+			count++;
+		}
+	//Adjust Comma if Necessary.
+	cout << ((count>1 && i!=numNodes) ? ", " : "");
+
+	}
+	cout << endl;
+	
+	//Displaying the the degree of each node in form: "Node(i)/degree"
+	cout << "The degree of each node (in the form node/degree) is:" << endl;
+	
+	//Get degree for each node.
+	for(i = 1; i < numNodes+1; i++)		//Iteration through Nodes(rows).
+	{ 
+		deg = 0;
+		for(j = 1; j < numNodes+1; j++) //Iteration through each Column.
+		{
+			if(AA[i][j]==1)				//If 1 is found, Increment Degree.
+			{
+				deg++;					
+			}
+		}
+			cout << i << "/" << deg << endl;
+	}
+	//Displaying the nodes adjacent to each in form: Node(i):adjN1, 2, 3, .. . 
+	cout << "The nodes adjacent to each node (in the form node: list of \
+adjacent nodes) is:" << endl;
+	for(i = 1; i < numNodes+1; i++)		//Iteration through Nodes(rows).
+	{ 
+		count = 0;
+		cout << i << ":";
+		for(j = 1; j < numNodes+1; j++) //Iteration through each Column.
+		{
+			if(AA[i][j]==1)	
+			{
+				cout << ((count>0 && i!=numNodes) ? ", " : "");	
+				cout << j;
+				count++;
+			}
+		}
+		cout << endl;
+	}
+}

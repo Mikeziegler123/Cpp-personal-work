@@ -1,0 +1,611 @@
+olaDLL
+
+// ID:  DLL.cpp / Implementation file for the class SortedList
+// AUTHOR:  Michael Ziegler
+// INSTALLATION:  MIDDLE TENNESSEE STATE UNIVERSITY
+// RCS: $Revision$
+// REMARKS:  Implementation file for the class SortedList.
+//   Pointer-based dummy-headed circular singly-linked list implementation.
+
+
+#include <iostream>
+using namespace std;
+
+#include "DLL.h"
+
+// Constructors and Destructor:
+
+//CONSTRUCTOR
+SortedList::SortedList() : size(0)  
+{
+	head = new tNode;
+	head->next = head;
+  //  head->item = NULL;    // optional - for debugging only
+} // end Constructor
+
+//COPYCONSTRUCTOR
+SortedList::SortedList(const SortedList& listArg)  
+{
+	size = listArg.size;
+
+	head = new tNode;
+	head->next = head;
+	//head->item = -888;    // optional - for debugging only
+	
+	copyList(listArg.head, head);
+} // end Copy Constructor
+
+//DECONSTRUCTOR
+SortedList::~SortedList()
+{
+	tNodePtr future;
+	tNodePtr curDestruct = head->next;
+	
+	while(curDestruct != head)	     //While: any Node exists along the head's
+	{			
+		future = curDestruct->next;         //point both to the same node.
+		delete curDestruct;
+		curDestruct = future;
+	}
+	delete head;
+} // end Destructor
+
+//OVERLOADEDOPERATOR
+SortedList& SortedList::operator=(const SortedList& rhs)
+{
+	tNodePtr future, cur, prev;
+	// Is there any work to be done?  Check if target same as rhs.
+	if ( this != &rhs )
+	{
+		if(size != 0)
+		{
+		// Deallocate anything the target of the assignment target
+		// might already have allocated to it.
+			cur = head->next->next;
+			prev = head->next;
+			
+			while(size!=0)		 //While not circled back to head.
+			{	
+				delete prev;
+				prev = cur;
+				cur = cur->next;
+				
+				--size;
+			}
+		}
+		// Now "copy" the object
+		size = rhs.size;
+		copyList(rhs.head, head);
+	}
+	return *this;
+} // end operator=
+
+
+// List Operations:
+
+//ISEMPTY
+bool SortedList::IsEmpty() const
+{
+	return (size == 0);
+} // end IsEmpty
+
+//LENGTH
+int SortedList::Length() const
+{
+	return size;
+} // end Length
+
+
+//INSERT
+void SortedList::Insert(ItemType newItem, bool& success)
+//                      IN                OUT
+{
+	int position = 1;
+	tNodePtr previous = NULL;
+	tNodePtr newPtr = new tNode;
+	newPtr->item = newItem;
+	bool isPresent = locateNode(newItem, previous, position);
+
+	if(!isPresent)
+	{
+		newPtr->next = previous->next;
+		previous->next = newPtr;
+		
+		++size;
+		success = true;
+	}
+	else
+		success = false;
+} // end Insert
+
+
+//REMOVE
+void SortedList::Remove(ItemType anItem, bool& success)   
+//                      IN               OUT
+{
+	int position = 1;
+	bool isFound;
+	tNodePtr previous = NULL;
+	tNodePtr current = NULL;
+	
+	isFound = locateNode(anItem, previous, position);
+
+	if (isFound)
+	{
+		// Redirect the "previous node's NEXT", making it point to
+		//the node following-the node we're about to remove (target).
+		//target = list[previous].next;- - - - - - - OLA_ALL_VERSION
+		current = previous->next;
+		
+		//list[previous].next = list[target].next; - OLA_ALL_VERSION
+		previous->next = current->next; 
+		
+		//PushAvail(target); - - - - - - - - - - - - OLA_ALL_VERSION
+		delete current;
+		current = NULL;
+		
+		//Adjust the size of the list, return success.
+		success = true;
+		--size;
+	}
+	else
+		success = false;
+} // end Remove.
+
+//FIND
+int SortedList::Find(ItemType anItem) const
+//                   IN
+{
+	tNodePtr prev;   // Pointer to predecessor of found node
+	int position;    // Item's list position
+
+	bool isPresent = locateNode(anItem, prev, position);
+
+    return  (isPresent) ? position : -1;
+} // end Find
+
+//RETRIEVE
+void SortedList::Retrieve(
+    int position, ItemType& dataItem, bool& success) const
+//	IN            OUT                 OUT
+{	
+	if(position > size || position <= 0)
+		success = false;
+	else
+	{
+		int count = 1;
+		tNodePtr cur = head->next;
+	
+		while(count != position)
+		{
+			cur = cur->next;
+			++count;
+		}
+		dataItem = cur->item;
+		
+		success = true;
+	}
+} // end Retrieve
+
+
+// Private functions:
+
+//COPYLIST
+void SortedList::copyList(tNodePtr original, tNodePtr duplicate)
+//                        IN                 OUT
+{
+	//Declarations.
+	tNodePtr duplicatePrev = duplicate;
+	tNodePtr duplicateCur;				   //Pointer to duplicate item.
+	tNodePtr originalCur = original->next; //Pointer to current original item.
+
+	//Go through entire list. stop at dummy head.
+	while(originalCur != original) 	
+	{
+		//New node for copied list.
+		duplicateCur = new tNode;              
+		
+		//Make the Copy.
+		duplicateCur->item = originalCur->item;
+		//Point 'new duplicate Node'to the dummy head.
+		duplicateCur->next = duplicatePrev->next;
+		
+		//Point 'duplicatePrev' to the new node.
+		duplicatePrev->next = duplicateCur;
+		duplicatePrev = duplicateCur;
+		
+		//move on to next Node.
+		originalCur = originalCur->next; 
+
+	}
+} // end copyList
+
+//LOCATENODE
+bool SortedList::locateNode
+    (ItemType anItem, tNodePtr& previous, int& position) const
+//   IN               OUT                 OUT
+{
+	position = 1;
+	tNodePtr curPtr = head->next;
+	previous = head;
+		//Traverse the list until 'curPtr' circles back to head/anItem is found.
+	
+		while(curPtr != head && curPtr->item < anItem)
+		{
+			previous = curPtr;          	//Continue traversing.
+			curPtr = curPtr->next;
+			++position;				//Increment position Count.
+		}
+		
+		//Check current item to see if it matches anitem.
+		if(curPtr->item == anItem)
+			return true; 
+		else 
+			return false;  
+} // end locateNode
+
+//  End of implementation file.
+5860 ranger2$ 
+5860 ranger2$ 
+5860 ranger2$ 
+5860 ranger2$ 
+5860 ranger2$ 
+5860 ranger2$ 
+5860 ranger2$ 
+5860 ranger2$ 
+5860 ranger2$ 
+5860 ranger2$ 
+5860 ranger2$ 
+5860 ranger2$ 
+5860 ranger2$ 
+5860 ranger2$ 
+5860 ranger2$ cat DLL.h
+// ID:  DLL.h / Header file for the class SortedList
+// RCS:  $Revision$
+// AUTHOR:  CSCI 2170 UNTCH
+// INSTALLATION:  MTSU
+// REMARKS:  Class and type definitions for the SortedList.
+//   Items are in strict ascending order; duplicates are not allowed.
+//   Dynamic storage dummy-headed circular singly-linked list implementation.
+
+#ifndef DLL_h_  // To prevent problems from multiple inclusions
+#define DLL_h_
+
+typedef int ItemType;     // data type of list items  ItemType-Alias for int.
+
+class SortedList
+{
+public:
+
+	// Constructors and Destructor:	
+	SortedList();                           // (default) constructor
+	SortedList(const SortedList& listArg);  // copy constructor
+	~SortedList();                          // destructor
+
+	// Overloaded Operator:
+
+	SortedList& operator=(const SortedList& rhs);  // assignment
+
+
+	// List Operations:
+
+	bool IsEmpty() const;
+	// Determines whether a sorted list is empty.
+	// Pre:  None.
+	// Post: Returns true if list is empty, otherwise returns false.
+
+	int Length() const;
+	// Returns the number of items that are in a sorted list.
+	// Pre:  None.
+	// Post: Returns the number of items currently on the list.
+
+	void Insert(ItemType newItem, bool& success);
+	//          IN                OUT
+	// Inserts newItem into its proper sorted position in a sorted 
+	// list.  Duplicates are not allowed and attempts to 		insert
+	// duplicates should be unsuccessful.  The success flag indicates
+	// whether the insertion was successful.
+	// Pre:  newItem is defined.
+	// Post: If insertion is successful, newItem is in its proper
+	//   sorted position in the list and success is true; otherwise 
+	//   success is false.  
+
+	void Remove(ItemType anItem, bool& success);
+	//          IN               OUT
+	// Deletes anItem from a sorted list.  The success flag indicates
+	// whether the deletion was successful.
+	// Pre:  anItem is defined.
+	// Post: If anItem was in the sorted list, it is removed and
+	
+	//   success is true; otherwise success is false.
+
+	int Find(ItemType anItem) const;
+	//       IN
+	// Returns the position (in the range 1<= position<= Length()) where
+	// anItem exists in a sorted list or -1 if anItem is not in the list.
+	// Pre:  anItem is defined.
+	// Post: Returns the position in the sorted list where anItem resides
+	//   or -1 if anItem is not in the sorted list.
+	//   The item anItem and the list are unchanged.
+
+	void Retrieve(int position, ItemType& dataItem, bool& success) const;
+	//            IN            OUT                 OUT
+	// Sets dataItem to the item at "position" of the sorted list.
+	// The success flag indicates whether the retrieval was successful.
+	// Pre:  position is defined and is the number of the item to be retrieved.
+	// Post: If 1 <= position <= Length(), then dataItem is the value
+	//   of the desired item and success is true; otherwise success is
+	//   false.  The list is left unchanged by this operation.
+
+
+private:
+	struct tNode;
+	typedef tNode*  tNodePtr;   // pointer to list node
+	struct tNode
+	{
+		ItemType    item;
+		tNodePtr    next;
+	};
+
+	void copyList(tNodePtr original, tNodePtr duplicate);
+	//            IN                 IN
+	// Make a deep copy of a list.
+	// Pre:  original points to an existing list's dummy node and
+	// duplicate points to an existing dummy node that points to itself.
+	// Post: duplicate points to a duplicate copy of the "original" list.
+
+	bool locateNode(ItemType anItem, tNodePtr& previous, int& position) const;
+	//              IN               OUT                 OUT
+	// Returns true if anItem exists in the list, a pointer to the previous
+	// (i.e., predecessor) node in the list and and anItem's list position.
+	// Returns false if anItem is not in the list and a pointer to what would
+	// have been the previous node if anItem had been in the list; the value
+	// of position is that of what anItem's would have been if it were in the
+	// list.
+	// Pre:  anItem is defined.
+	// Post: See above.  Note that the value of position lies in the range
+	// 1 <= position <= Length()+1. The pointer "previous" points to
+	// the last node on the list whose value was less than that of
+	// anItem or to the dummy node if the position==1.
+
+	int        size;        // number of items on list.
+	tNodePtr   head;        // pointer to the dummy node of the
+	                        //   dummy headed circular singly-linked list.
+
+}; // end SortedList class
+
+#endif
+5861 ranger2$ 
+5861 ranger2$ 
+5861 ranger2$ 
+5861 ranger2$ 
+5861 ranger2$ 
+5861 ranger2$ 
+5861 ranger2$ 
+5861 ranger2$ 
+5861 ranger2$ 
+5861 ranger2$ 
+5861 ranger2$ 
+5861 ranger2$ 
+5861 ranger2$ ls
+DLL.cpp  DLLtester.o  SLC.o                 a.out     makefile
+DLL.h    SLC.cpp      SLCtester.o           item      olaDLL
+DLL.o    SLC.h        SortedListTester.cpp  lab4.cpp  olaSLC
+5862 ranger2$ cat makefile
+# makefile for "SortedListTester (olaDLL & olaALL & olaSLC)" program(s)
+#
+
+CXX = g++ -std=c++11
+CXXFLAGS = -pedantic -g
+
+
+# Create linked-list version (olaDLL) of "SortedListTester" program
+olaDLL:                DLLtester.o DLL.o
+	$(CXX) $(CXXFLAGS) DLLtester.o DLL.o -o olaDLL
+
+DLLtester.o:                    SortedListTester.cpp DLL.h
+	$(CXX) $(CXXFLAGS) -c -DDLL SortedListTester.cpp -o DLLtester.o
+
+DLL.o:                    DLL.cpp DLL.h
+	$(CXX) $(CXXFLAGS) -c DLL.cpp
+
+
+# Create linked-list version (olaALL) of "SortedListTester" program
+olaALL:                ALLtester.o ALL.o
+	$(CXX) $(CXXFLAGS) ALLtester.o ALL.o -o olaALL
+
+ALLtester.o:                    SortedListTester.cpp ALL.h
+	$(CXX) $(CXXFLAGS) -c -DALL SortedListTester.cpp -o ALLtester.o
+
+ALL.o:                    ALL.cpp ALL.h
+	$(CXX) $(CXXFLAGS) -c ALL.cpp
+
+
+# Create simple array-based version (olaSLC) of "SLCtester" program
+olaSLC:                SLCtester.o SLC.o
+	$(CXX) $(CXXFLAGS) SLCtester.o SLC.o -o olaSLC
+
+SLCtester.o:                    SortedListTester.cpp SLC.h
+	$(CXX) $(CXXFLAGS) -c -DSLC SortedListTester.cpp -o SLCtester.o
+
+SLC.o:                    SLC.cpp SLC.h
+	$(CXX) $(CXXFLAGS) -c SLC.cpp
+
+
+# Remove object and executable files
+clean:
+	rm -f *.o olaDLL olaALL olaSLC 
+5863 ranger2$ 
+5863 ranger2$ 
+5863 ranger2$ 
+5863 ranger2$ 
+5863 ranger2$ 
+5863 ranger2$ 
+5863 ranger2$ 
+5863 ranger2$ 
+5863 ranger2$ 
+5863 ranger2$ 
+5863 ranger2$ 
+5863 ranger2$ 
+5863 ranger2$ 
+5863 ranger2$ 
+5863 ranger2$ ls
+DLL.cpp  DLLtester.o  SLC.o                 a.out     makefile
+DLL.h    SLC.cpp      SLCtester.o           item      olaDLL
+DLL.o    SLC.h        SortedListTester.cpp  lab4.cpp  olaSLC
+
+
+
+
+
+Lab4
+
+
+5864 ranger2$ cat lab4.cpp
+/* Author:  Michael Ziegler
+ * Course:  CSCI 3080
+ * Lab number: Lab 4 / Code: ola4 / Source: main.cpp
+ *
+ * This program determines attributes of a graph
+ * based on an array-pointer representation of a graph.
+ * Specifically, this program reads in the number of
+ * nodes in the graph, reads in the number of rows
+ * (no more than 20) in the array-pointer representation
+ * of the graph, reads in the array-pointer representation
+ * of the graph, and then:
+
+ * creates the adjacency matrix then print it.
+ * print the nodes that are isolated
+ * print the degrees of each node
+ * print all nodes adjacent to each node
+ *
+ * Due date:April 12, 2018 before 11:59pm
+*/
+
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+int main()
+{
+	//Declarations
+	int AP[20+1][2+1]={};
+	int AA[10+1][10+1] = {};
+    int i, j, k, count, sum;
+	int numNodes, numRows, currentRow, numCol, currentCol, iso = 0, deg = 0;
+	//Assigns: from Standard-User-Input, numNodes, and numRows.
+	cout << endl << "Please input the number of nodes: ";
+	cin >> numNodes;
+
+	cout << "Please input the number of rows in the matrix: ";
+	cin >> numRows;
+
+	cout << "Please input the array-pointer representation of the graph:"
+ << endl << endl;
+
+	//Read-in: the array pointer representation (AP).
+	for(i = 1; i<numRows+1; i++)
+	{
+		cin >> AP[i][1] >> AP[i][2];
+	}
+
+	//Create the adjacency array (AA) from the array pointer (AP).
+	for(i = 1; i<numNodes; i++)
+	{
+		//Set current row to be what is in AP[i][2].
+		currentRow = AP[i][2];
+
+		//While the current row is not 0.
+		while(currentRow!=0)
+		{
+			//Set the current column to what is in AP[current row][1].
+			currentCol = AP[currentRow][1];
+
+			//Set AA[i][current column] to 1.
+			AA[i][currentCol] = 1;
+
+			//set current row to what is in AP[current row][2].
+			currentRow = AP[currentRow][2];
+		}
+	}
+	//Displaying the adjacency matrix.
+    cout << endl << "The adjacency matrix is:" << endl;
+    for(i = 1; i < numNodes+1; i++)
+	{
+		for(j = 1; j < numNodes+1; j++)
+		{
+			cout << " " << AA[i][j];
+			if(j == numNodes)
+			{
+				cout << endl;
+			}
+		}
+	}
+
+	//Displaying the number of isolated nodes.
+	cout << endl << endl << "The isolated nodes are: ";
+	count = 0;
+	for(i = 1; i < numNodes+1; i++)		//Iteration through Nodes(rows).
+	{
+
+		deg = 0;
+		for(j = 1; j < numNodes+1; j++) //Iteration through each Column.
+		{
+			if(AA[i][j]==1)
+			{
+				deg++;
+			}
+		}
+		if(deg==0)
+		{
+			
+			iso = i;
+			count++;
+			cout << iso;
+		}
+	//Adjust Comma if Necessary.
+	cout<< ((count>1 && i!=numNodes) ? ", " : "");
+
+	}
+	cout << endl;
+
+	//Displaying the the degree of each node in form: "Node(i)/degree"
+	cout << "The degree of each node (in the form node/degree) is:" << endl;
+
+	//Get degree for each node.
+	for(i = 1; i < numNodes+1; i++)		//Iteration through Nodes(rows).
+	{
+		deg = 0;
+		for(j = 1; j < numNodes+1; j++) //Iteration through each Column.
+		{
+			if(AA[i][j]==1)				//If 1 is found, Increment Degree.
+			{
+				deg++;
+			}
+		}
+			cout << i << "/" << deg << endl;
+	}
+	//Displaying the nodes adjacent to each in form: Node(i):adjN1, 2, 3, .. .
+	cout << "The nodes adjacent to each node (in the form node: list of \
+adjacent nodes) is:" << endl;
+	for(i = 1; i < numNodes+1; i++)		//Iteration through Nodes(rows).
+	{
+		count = 0;
+		cout << i << ":";
+		for(j = 1; j < numNodes+1; j++) //Iteration through each Column.
+		{
+			if(AA[i][j]==1)
+			{
+				cout << ((count>0 && i!=numNodes) ? ", " : "");
+				cout << j;
+				count++;
+			}
+		}
+		cout << endl;
+	}
+
+}
+
+
+
+

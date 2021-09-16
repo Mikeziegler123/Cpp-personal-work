@@ -1,0 +1,409 @@
+cla26
+
+
+5999 ranger2$ cat exampleList.dat
+Jones
+1214
+Smith
+1414
+Brown
+8282
+Wilson
+92924
+Able
+3244
+Johnson
+5829
+Parker
+8283
+Hankins
+1000000
+Catrice
+40
+Kandis
+21
+Dane
+22
+Shaunna
+34
+Odilia
+65
+Joslyn
+5346
+Debera
+443
+Toi
+997
+Yesenia
+4768
+Ron
+654
+Erika
+69
+God
+2
+Darrick
+2345
+Kelli
+36
+Daniella
+76
+Jamison
+478
+Richie
+44
+Mike Ziegler
+1
+Damaris
+789
+Elene
+6789
+Theodore
+678
+Errol
+567
+Johnna
+456
+Alayna
+345
+Carey
+234
+Catherin
+123
+Beatrice
+456
+Gisele Wax
+111
+Tran Chavera
+222
+Eldridge Gerry
+Lily Walden
+333
+Hallie Lafountain
+444
+Flor Cade
+555
+Dawna Cowger
+666
+Shad Turrell
+777
+Noriko Cid
+888
+Isis Mcelyea
+999
+Yanira Arvizo
+121
+Rick Brazeal
+232
+6000 ranger2$ ls
+Zieglercla26.log  cla26            inlab10.cc   inlab10.h      lab10      sort
+a.out             exampleList.dat  inlab10.dat  inlab10.h.gch  main10.cc
+6001 ranger2$ cat inlab19.cc
+cat: inlab19.cc: No such file or directory
+6002 ranger2$ cat inlab10.dat
+Jones
+1214
+Smith
+1414
+Brown
+8282
+Wilson
+9292
+Able
+3244
+Johnson
+5829
+Parker
+8283
+Hankins
+9295
+6003 ranger2$ 
+6003 ranger2$ 
+6003 ranger2$ 
+6003 ranger2$ 
+6003 ranger2$ 
+6003 ranger2$ ls
+Zieglercla26.log  cla26            inlab10.cc   inlab10.h      lab10      sort
+a.out             exampleList.dat  inlab10.dat  inlab10.h.gch  main10.cc
+6004 ranger2$ cat inlab10.cc
+//FILE: inlab10.cc
+//This file contains the implementation file for the inlab10.h header file.
+//This implementation uses a dynamic linked list structure implementing the
+//MultiListClass object.  The implementation uses nodes which have two pointer
+//fields:  one to point to the next record by name (nextName) and one to point
+//to the next record by account number (nextNum).  The linked list is also maintained
+//with a dummy header node called head.
+
+#include "inlab10.h"
+#include <cstddef>
+#include <iostream>
+using namespace std;
+//This is the structure of nodes in the list
+struct Node
+{
+	TypeData name;		//Person's name
+	TypeInt number;		//Person's account number
+	TypePtr nextNum;	//Pointer to next record by account number
+	TypePtr nextName;	//Pointer to next record by name
+};
+
+//Constructor for MultiListClass which sets up the dummy header node.
+MultiListClass::MultiListClass()
+{
+	//head is a private data member of the MultiListClass object
+	head=new Node;
+	head->nextName = NULL;
+	head->nextNum=NULL;
+
+}
+
+//Destructor function which deallocates memory set up to create linked list
+MultiListClass::~MultiListClass()
+{
+	TypePtr q = head->nextName;
+	bool emptylist = q==NULL;
+	while (!emptylist)
+	{
+		delete(head);
+		head = q;
+		q = q->nextName;
+		emptylist = q==NULL;
+	}
+	delete (head);
+}
+
+//Function which receive a person's name and account number from a client
+//program, creates a node to store this information in, calls
+//the insertNameList() function to insert this node in the correct position
+//of the linked list ordered by customer name and lastly, calls the insertNumList()
+//function to insert this node in the correct position of the linked list ordered
+//by customer account number.
+
+void MultiListClass::insertNode (TypeData newName, TypeInt newNum)
+//IN:  customer's name
+//IN:  customer's account number
+{
+	TypePtr p;
+
+	p = new Node;
+	p->name = newName;
+	p->number = newNum;
+	p->nextNum = NULL;
+	p->nextName = NULL;
+	insertNameList (p);
+	insertNumList (p);
+}
+
+//Function to insert a node into a linked list ordered by customer name
+void MultiListClass::insertNameList (TypePtr p)
+//IN:  pointer which points to the node to be inserted into the list
+{
+	//initialize prev and current
+	TypePtr prev = head;
+	TypePtr current = head->nextName;
+
+	//move prev and current until current is NULL or current is pointing
+	//to a node which contains a name that is larger than the name to be
+	//inserted into the list
+	while (!insertName (current,p))
+	{
+		prev = current;
+		current = current->nextName;
+	}
+
+	//insert the node between prev and current
+	prev ->nextName = p;
+	p->nextName = current;
+}
+
+//Function to insert a node into a linked list ordered by customer account number
+void MultiListClass::insertNumList (TypePtr p)
+{
+	//Initialize prev and current
+	TypePtr prev = head;
+	TypePtr current = head->nextNum;
+
+	//Move prev and current until current is NULL or is pointing to a
+	//node which contains a customer number that is larger than the
+	//customer number contained in the node to be inserted
+	while (!insertNum (current, p))
+	{
+		prev = current;
+		current = current->nextNum;
+	}
+
+	//Insert the node between prev and current
+	prev ->nextNum = p;
+	p->nextNum = current;
+}
+
+//bool function which returns TRUE if current is NULL or if
+//current is pointing to a node which contains a customer's name
+//that is larger than the name contained in the node to be inserted.
+bool MultiListClass::insertName (TypePtr q, TypePtr t)
+//IN:  pointer to the current position in the list to be examined
+//IN:  pointer to a node to be inserted
+{
+	return ((q==NULL) || (q->name > t->name));
+}
+
+
+//bool function which returns TRUE if the current pointer is at the end
+//of the list or if the current pointer is pointing to a node with a number
+//field greater than the number in the node to be inserted
+bool MultiListClass::insertNum(TypePtr q, TypePtr t)
+//IN:  pointer to the current position in the list to be examined
+//IN:  pointer to the node to be inserted
+{
+	return ((q==NULL) || (q->number > t->number));
+}
+
+//Function which prints out the data contained in a linked lists of customer data
+//which is ordered by customer name
+void MultiListClass:: nameTraverse ()
+{
+	//Insert Exercise 7 here!
+	TypePtr trV = head;
+	trV = trV->nextName;
+	
+	while(trV->nextName != NULL)
+	{
+		cout << trV->name << endl;
+		trV = trV->nextName;
+	}
+	cout << trV->name << endl;
+}
+
+
+//Function which prints out the data contained in a linked list of customer data
+//which is ordered by customer account numbers.
+void MultiListClass::numTraverse ()
+{
+	//Insert Exercise 7 here!
+	TypePtr trV = head;
+	trV = trV->nextNum;
+	while(trV->nextNum != NULL)
+	{
+		
+		cout << trV->number << endl;  
+		trV = trV->nextNum;
+		
+	}
+	cout << trV->number << endl;
+}
+6005 ranger2$ 
+6005 ranger2$ 
+6005 ranger2$ 
+6005 ranger2$ 
+6005 ranger2$ 
+6005 ranger2$ 
+6005 ranger2$ ls
+Zieglercla26.log  cla26            inlab10.cc   inlab10.h      lab10      sort
+a.out             exampleList.dat  inlab10.dat  inlab10.h.gch  main10.cc
+6006 ranger2$ cat inlab10.h
+//File: inlab10.h
+//
+//This file contains the definition of the MultiListClass.
+
+#include <string>
+using namespace std;
+
+typedef string TypeData;
+typedef struct Node* TypePtr;
+typedef int TypeInt;
+
+
+class MultiListClass
+{
+	public:
+		//the constructor and destructor
+		MultiListClass();
+		~MultiListClass();
+
+		//a function to insert data into the list
+		void insertNode(TypeData, TypeInt);
+
+		//functions to traverse by name or by number
+		void nameTraverse();
+		void numTraverse();
+	private	:
+		TypePtr head;     //the dummy head of the list
+
+		//keep the names in order
+		void insertNameList (TypePtr);
+
+		//keep the customer numbers in order
+		void insertNumList(TypePtr);
+
+		//has to position for inserting a name or
+		//number been found?
+		bool insertName (TypePtr,TypePtr);
+		bool insertNum (TypePtr, TypePtr);
+};
+6007 ranger2$ 
+6007 ranger2$ 
+6007 ranger2$ 
+6007 ranger2$ 
+6007 ranger2$ 
+6007 ranger2$ 
+6007 ranger2$ 
+6007 ranger2$ ls
+Zieglercla26.log  cla26            inlab10.cc   inlab10.h      lab10      sort
+a.out             exampleList.dat  inlab10.dat  inlab10.h.gch  main10.cc
+6008 ranger2$ cat main10.cc
+//file:  main10.cc
+//
+//This program inserts data into a multi-linked list.  The user 
+//enters names and account numbers.  The multi-linked list is used
+//to keep the data in order by name and by account number.
+//
+//To run the program, provide the file name on the command line:
+//
+//     ola10  inlab10.dat
+
+#include "inlab10.h"
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <cstdlib>
+using namespace std;
+
+int main(int argc, char *argv[])
+{
+	//Did the user provide the file name on the command line?
+	if (argc != 2)
+	{
+		cerr <<"Usage: " << argv[0] << " filename" << endl;
+		exit (-1);
+	}
+
+	//Open the file for reading as 'inFile'.
+	ifstream inFile;
+	inFile.open(argv[1]);
+
+	if (!inFile)
+	{
+		cerr <<"Error: unable to open " << argv[1] << endl;
+		exit (-1);
+	}
+
+	//declare instance of MultiListClass
+	MultiListClass oneList;
+	TypeData name;
+	TypeInt id;
+    char ch;
+
+	//read file and insert data into the list
+	getline (inFile, name);
+	while (inFile)
+	{
+		inFile >> id;
+		inFile.get(ch);
+		oneList.insertNode (name, id);
+		getline (inFile, name);
+	}
+	oneList.nameTraverse();
+	oneList.numTraverse();
+
+	return 0;
+}

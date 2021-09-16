@@ -1,0 +1,146 @@
+ola211
+
+// ola211 BY student name,  CSCI2170-sec, Due: mm/dd/yy 
+// PROGRAM ID:  ola211 / Stack Manipulation Programming Assignment
+// RCS:  $Revision$ $Date$
+// AUTHOR:  student name
+// INSTALLATION:  MIDDLE TENNESSEE STATE UNIVERSITY
+// REMARKS:  This program solves a slightly extended version of a
+// Carrano problem.  This program uses two stacks, a char stack (op)
+// used to implement the operator stack and an int stack (val) used
+// to implement the operand stack, to evaluate simple infix expressions.
+//     The input infix expressions are very simple, consisting of
+// single-digit integer operands; the operators +,-,*, and /; and
+// parentheses.  No unary operators are supported and the expression
+// contains no embedded blanks.  No error checking is done, the
+// input expressions are presumed to be valid.
+//     The extension to Carrano is that multiple infix expressions
+// can be input.   Expressions are input, evaluated, and the results 
+// printed until a line starting with the capital letter "Q" is
+// encountered; the program should then silently terminate.
+//     In addition to providing practice in the use of stacks, this
+// program introduces the STL stack class.
+//
+//  .    1    .    2    .    3    .    4    .    5    .    6    .    7    .
+//3456789012345678901234567890123456789012345678901234567890123456789012345
+                                                                        
+
+#include <iostream>
+#include <iomanip>
+#include <string>
+#include <cassert>
+#include <stdlib.h>
+#include <stack>
+
+using namespace std;
+
+
+// Function prototypes
+int  Precedence(char oper);
+void Execute(stack<char>& op, stack<int>& val);
+
+
+int main()
+{
+	stack<char> op;
+	stack<int>  val;
+	
+	char ch;
+	cout<< "Enter Expression:" << endl;
+	cin >> ch;
+	while(ch != 'Q')
+	{
+		cin >> ch;
+		if(ch >= '0' && ch <= '9')
+		{
+			int integer = ch - '0';
+			val.push(integer);
+		}
+		else if(ch >= '(' && ch <= '/')
+		{
+			op.push(ch);
+		}
+	Execute( op, val);
+	return 0;
+	}
+} // end main()
+
+
+// Return the numeric precedence value of an operator
+int Precedence(char oper)
+//             IN
+{
+	if (     oper=='*' || oper=='/')
+		return 2;
+	else if( oper=='+' || oper=='-')
+		return 1;
+	else
+		return 0;
+} //end Precedence
+
+
+// Evaluate postfix expression from stack
+void Execute(stack<char>& op,  stack<int>& val)
+//           INOUT            INOUT
+{	
+	cout<< "Check Evaluate"<< endl;
+	char ch;
+	int result, op1, op2;
+
+	
+	switch(ch)
+	{
+		case '+':
+		result = op1 + op2; break;
+		case '-':
+		result = op1 - op2; break;
+		case '*':
+		result = op1 * op2; break;
+		case '/':
+		if( (op1 >= op2) && (op1 != 0) && (op2 != 0) )
+		{
+		result = op1 / op2; break;
+		}
+		else
+		{
+			result = 0; break;
+		}
+	}
+	cout << endl << result << endl;
+	//val.push(result);
+	//while(!val.empty() || !op.empty())
+	//{
+	//	cout<< val.top() << endl;
+		//val.pop();
+	//}
+} //end Execute
+5787 ranger2$ cat calc infix
+cat: calc: No such file or directory
+cat: infix: No such file or directory
+5788 ranger2$ cat calc.infix
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+(0)
+(5)
+(9)
+0-8
+3+5
+9-0
+8*8
+9/2
+9/3
+9-4/2
+(8-4)*2
+(0-5)*3/(2+(1))
+(((0-5)*3)/(2+(1)))
+2+3-1*5/2
+0-0
+Q

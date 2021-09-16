@@ -1,0 +1,28 @@
+//BINARY NUMBER CONVERSION
+// By: Michael Ziegler
+//Compile first, and run through terminal
+//Ex input:      a.out 11111011
+//Ex  Output:              500
+#include <iostream>
+#include <iomanip>
+#include <cstring?
+using namespace std;
+
+int main(int argc, char*argv[])
+{
+	int pause2see;
+	int decimalValue;
+
+	for(int a = 1; a < argc; ++a)
+	{
+    decimalValue = 0;
+
+		for (int p = 0; p < strlen(argv[a]); ++p)
+		{
+			decimalValue *= 2;
+			if(argv[a][p]=='1')
+            decimalValue+=1;
+		}
+    cout<< decimalValue << endl;
+	}
+}

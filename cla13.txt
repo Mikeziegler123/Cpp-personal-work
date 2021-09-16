@@ -1,0 +1,137 @@
+cla13
+
+Script started on Thu 15 Feb 2018 01:54:44 PM CST
+$ pr -n -t -e4 cla13a.cc
+    1	/* cla13a BY Michael Ziegler,  CSCI 1170-section 002 */
+    2	//FILE:      cla13a.cc
+    3	//PURPOSE:   This program reads data, character by character,
+    4	//           from standard input (cin) and counts the number
+    5	//           of newline characters.  As it reads, it up-cases
+    6	//           (i.e., capitalizes) lowercase letters and prints
+    7	//           the revised stream of characters to standard output (cout).
+    8	
+    9	#include <iostream>
+   10	
+   11	using namespace std;
+   12	
+   13	// Function Prototype(s):
+   14	char ChangeCase(char ch);
+   15	
+   16	
+   17	int main()
+   18	{
+   19	    char inCh;              // input character
+   20	    char outCh;             // output character
+   21	    int  newlineTally = 0;  // Tally of '\n' characters read
+   22	    int  tabTally = 0;      // Tally of '\t' characters read
+   23	
+   24	    cin.get(inCh);
+   25	    while (cin)
+   26	    {
+   27	        if (inCh == '\n')
+   28	            newlineTally++;
+   29	        if (inCh == '\t')
+   30	            tabTally++;
+   31	        outCh = ChangeCase(inCh);
+   32	        cout << outCh;
+   33	        cin.get(inCh);
+   34	    }
+   35	
+   36	    cout << endl << endl;
+   37	    cout << newlineTally << " newlines encountered." << endl;
+   38	    cout << tabTally << " tabs encountered." << endl;
+   39	
+   40	    return 0;
+   41	}
+   42	
+   43	
+   44	// FUNCTION: ChangeCase
+   45	// TASK: If the value of the single argument to the function is a
+   46	//       lowercase letter, the function returns the corresponding
+   47	//       uppercase letter;  otherwise, simply returns the argument's
+   48	//       value.
+   49	
+   50	char ChangeCase(char ch)
+   51	{
+   52	    char newCh;            // character to return
+   53	            
+   54	    // Is ch a lowercase letter?
+   55	    if (ch>='a' && ch<='z')
+   56	        newCh = ch + ('A'-'a'); 
+   57	    else if (ch>='A' && ch<='Z')
+   58	        newCh = ch - ('A'-'a');  
+   59	    
+   60	    else
+   61	        newCh = ch;
+   62	
+   63	    return newCh;
+   64	} 
+$ aCC cla13a.cc -o recase
+$ recase < $CLA/cla13a.cc
+// CLA13A by STUDENT NAME, csci 2170-SEC
+//file:      CLA13A.CC
+//purpose:   tHIS PROGRAM READS DATA, CHARACTER BY CHARACTER,
+//           FROM STANDARD INPUT (CIN) AND COUNTS THE NUMBER
+//           OF NEWLINE CHARACTERS.  aS IT READS, IT UP-CASES
+//           (I.E., CAPITALIZES) LOWERCASE LETTERS AND PRINTS
+//           THE REVISED STREAM OF CHARACTERS TO STANDARD OUTPUT (COUT).
+
+#INCLUDE <IOSTREAM>
+
+USING NAMESPACE STD;
+
+// fUNCTION pROTOTYPE(S):
+CHAR cHANGEtOuPPERcASE(CHAR CH);
+
+
+INT MAIN()
+{
+	CHAR INcH;              // INPUT CHARACTER
+	CHAR OUTcH;             // OUTPUT CHARACTER
+	INT  NEWLINEtALLY = 0;  // tALLY OF '\N' CHARACTERS READ
+//	INT  TABtALLY = 0;      // tALLY OF '\T' CHARACTERS READ
+
+	CIN.GET(INcH);
+	WHILE (CIN)
+	{
+		IF (INcH == '\N')
+			NEWLINEtALLY++;
+		OUTcH = cHANGEtOuPPERcASE(INcH);
+		COUT << OUTcH;
+		CIN.GET(INcH);
+	}
+
+	COUT << ENDL << ENDL;
+	COUT << NEWLINEtALLY << " NEWLINES ENCOUNTERED." << ENDL;
+//	COUT << TABtALLY     << " TABS ENCOUNTERED."     << ENDL;
+
+	RETURN 0;
+}
+
+
+// function: cHANGEtOuPPERcASE
+// task: iF THE VALUE OF THE SINGLE ARGUMENT TO THE FUNCTION IS A
+//       LOWERCASE LETTER, THE FUNCTION RETURNS THE CORRESPONDING
+//       UPPERCASE LETTER;  OTHERWISE, SIMPLY RETURNS THE ARGUMENT'S
+//       VALUE.
+
+CHAR cHANGEtOuPPERcASE(CHAR CH)
+{
+	CHAR NEWcH;            // CHARACTER TO RETURN
+			
+	// iS CH A LOWERCASE LETTER?
+	IF ( CH>='A' && CH<='Z' )
+		NEWcH = CH + ('a'-'A');
+	ELSE
+		NEWcH = CH;
+
+	RETURN NEWcH;
+} 
+
+
+59 newlines encountered.
+35 tabs encountered.
+$ exit
+exit
+
+Script done on Thu 15 Feb 2018 01:56:10 PM CST

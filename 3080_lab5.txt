@@ -1,0 +1,117 @@
+3080_lab5
+
+/* Author:  Michael Ziegler
+ * Course:  CSCI 3080
+ * Lab number: Lab 5 / Code: ola5 / Source: main.cpp
+ * 
+ * This program will do a preorder, inorder and 
+ * postorder traversal of a graph stored as a 
+ * left-middle-right child array representation.
+ * This program then reads in the number os nodes
+ * in a graph, then reads the left-middle-right 
+ * child array representation before printing the 
+ * three traversals 
+ * 
+ * Due date: April 24, 2018 before 11:59pm
+*/
+#include <iostream> 
+using namespace std;
+
+//Array Declarations
+void preOrder(int[][3], int, int);
+void inOrder(int[][3], int, int);
+void postOrder(int[][3], int, int);
+
+int main()
+{
+	int n;
+	int ar[11][3];
+	
+	//Reads in: number of nodes from the graph.
+	cout << "Please input the number of nodes: ";
+	cin >> n;
+	
+	//Read in:left-middle-right child array.
+	cout << "Please input the left-middle-right child array representat\
+ion of the graph: " << endl << endl;
+	
+	ar[0][0] = 0;
+	ar[0][1] = 1;
+	ar[0][2] = 0;
+	
+	for(int i = 1; i <= n;i++)
+		for(int j = 0;j < 3; j++)
+		{
+			cin >> ar[i][j];
+		}	
+	//Print out the traversals.
+	cout << endl << "The preorder traversal is: " << endl;
+	preOrder (ar, 0, 1);
+	cout << endl;
+	
+	cout << endl << "The inorder traversal is: " << endl;
+	inOrder (ar, 0, 1);
+	cout << endl;
+	
+	cout << endl << "The postorder traversal is: " << endl;
+	postOrder (ar, 0, 1);
+	cout << endl;
+	
+return 0;
+}
+  
+void preOrder(int array[][3], int dep, int child)
+{
+	int i = array[dep][child];
+	cout << "  " << i;
+	if (array[i][0] != -1)
+	{
+		preOrder(array, i, 0);
+	}
+	if (array[i][1] != -1)
+	{
+		preOrder(array, i, 1);
+	}
+	if (array[i][2] != -1)
+	{
+		preOrder(array, i, 2);
+	}
+}
+
+void inOrder(int array[][3], int dep, int child)
+{
+	int i = array[dep][child];		
+	if (array[i][0] != -1)
+	{
+		inOrder(array, i, 0);
+	}
+	cout << "  " << i;
+	if (array[i][1] != -1)
+	{
+		inOrder(array, i, 1);
+	}
+	if (array[i][2] != -1)
+	{
+		inOrder(array, i, 2);
+	}
+}
+
+void postOrder(int array[][3], int dep, int child)
+{
+	int i = array[dep][child];
+	
+	if (array[i][0] != -1)
+	{
+	postOrder(array, i, 0);
+	}
+	if (array[i][1] != -1)
+	{
+	postOrder(array, i, 1);
+	}
+	if (array[i][2] != -1)
+	{
+		postOrder(array, i, 2);
+	}
+	cout << "  " << i;
+}
+

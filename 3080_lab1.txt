@@ -1,0 +1,48 @@
+3080_lab1
+
+/*
+Author: Michael Ziegler
+Course: CSCI 3080
+Ola1
+Purpose: To enthusiastically greet the user.
+*/
+#include <iostream>
+using namespace std;
+
+int main()
+{
+string user_name;
+
+    cout << "Please input your name: ";
+    getline(cin, user_name);
+    cout << " Hello " << user_name <<"!" << endl;
+    cout << "";
+    getline(cin, user_name);
+return 0;
+}
+
+
+
+
+/*
+Author: Michael Ziegler
+Course: CSCI 3080
+Ola1
+Purpose: To enthusiastically greet the user.
+*/
+#include <iostream>
+using namespace std;
+
+int main()
+{
+    string user_name;
+    cout << "Please input your name: ";
+    getline(cin, user_name);
+    cout << " Hello " << user_name <<"!" << endl;
+    cout << "";
+    getline(cin, user_name);
+return 0;
+
+}
+
+

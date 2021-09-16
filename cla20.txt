@@ -1,0 +1,465 @@
+cla20
+
+Ex28_data.0  Ex29_data.2  Ex30_data.2      deleteIthNode.cc  main8b.cc
+Ex28_data.1  Ex29_data.3  Ex30_data.3      inlab8.cc         main8c.cc
+Ex28_data.2  Ex29_data.4  ZieglerEx28.log  inlab8.h          structs.h
+Ex28_data.3  Ex29_data.5  ZieglerEx29.log  inlab8.h.gch      structs.h.gch
+Ex29_data.0  Ex30_data.0  ZieglerEx30.log  insertInOrder.cc  typescript
+Ex29_data.1  Ex30_data.1  a.out            main8a.cc
+5962 ranger2$ 
+5962 ranger2$ 
+5962 ranger2$ 
+5962 ranger2$ cat deleteIthNode.cc
+// File:  deleteIthNode.cc
+//
+// This is the implementation file for the method that deletes the ith item
+// from a list of a ListClass object
+
+#include "inlab8.h"
+#include <iostream>
+#include <fstream>
+#include <stdlib.h>
+using namespace std;
+
+#include "structs.h"
+
+
+//Function to delete the ith node from the list
+//  If there are fewer than i nodes in the list, an error is returned.
+void ListClass::deleteIthNode(int i)
+{
+	NodePtrType q = head; //q will point to the item to delete
+	NodePtrType prev;     //prev will point to the item before q	
+	int j = 1;            //j will keep count of which node in the list
+                          //    we are currently on                   
+
+	if (head == NULL)
+		cout<<"Not enough items in list\n";
+	else
+	{
+		//Traverse the list to find the ith item
+		//Replace this with a while loop that will traverse
+		//the list until either j == i or the end of the list
+		//is encountered.
+		while (j != i && q->next != NULL)
+		{
+			prev = q;
+			q = q->next;
+			j++;
+		}		
+		//If there are i items in the list, delete the ith one
+		//Replace this with the if part of an if-else statement.
+		//The if part should delete the ith item if there is an
+		//ith item.
+		if (j == i)
+		{
+			prev->next = prev->next->next;
+			delete q;
+		}
+		else
+			cout<<"Not enough items in list\n";
+	}
+}//end of deleteIthNode
+
+5963 ranger2$ 
+5963 ranger2$ 
+5963 ranger2$ 
+5963 ranger2$ 
+5963 ranger2$ ls
+Ex28_data.0  Ex29_data.2  Ex30_data.2      deleteIthNode.cc  main8b.cc
+Ex28_data.1  Ex29_data.3  Ex30_data.3      inlab8.cc         main8c.cc
+Ex28_data.2  Ex29_data.4  ZieglerEx28.log  inlab8.h          structs.h
+Ex28_data.3  Ex29_data.5  ZieglerEx29.log  inlab8.h.gch      structs.h.gch
+Ex29_data.0  Ex30_data.0  ZieglerEx30.log  insertInOrder.cc  typescript
+Ex29_data.1  Ex30_data.1  a.out            main8a.cc
+5964 ranger2$ cat insertInOrder.cc
+// File:  insertInOrder.cc
+//
+// This is the implementation file for the method that inserts an item in
+// sorted order into a list for a ListClass object.
+
+#include "inlab8.h"
+#include <iostream>
+#include <fstream>
+#include <stdlib.h>
+using namespace std;
+
+#include "structs.h"
+
+
+// This function appends the record 'newData' into the sorted position of the linked list.
+// If the list is empty, the new node is the new head of the list.
+void ListClass::insertInOrder(RecordType newData)
+//		INOUT	IN
+{
+	NodePtrType newNode, current;//Pointers to the new node and for
+									  //traversing the list
+	
+	// Create a new node to hold the record.
+	newNode = new Node;
+	newNode->data = newData;
+	newNode->next = NULL;
+	
+	//if (expression to check if the list is empty)
+	if (head==NULL) 
+	{
+		//  code to make the new node the head of the list
+		head=newNode;
+		newNode->next = NULL;
+	}
+	//else if (expression to check if the new acctNum is less than the head accNum)
+	else if (newNode->data.acctNum < head->data.acctNum)
+	{
+		//  code to make the new node the head of the list
+		newNode->next=head;
+		head = newNode;
+	}
+	else
+	{
+		//else, put the new node where it belongs.
+		//Replace this with the code necessary to traverse the list and find the
+		//correct location for the new node to go.
+		current = head;
+		while(current->next != NULL && current->data.acctNum < newNode->data.acctNum)
+		{
+			current = current->next;
+		}
+		//Replace this with the code necessary to insert the new node into the list
+		newNode->next = current->next;
+		current->next = newNode;
+	}
+}//end of insertInOrder function
+5965 ranger2$ 
+5965 ranger2$ 
+5965 ranger2$ 
+5965 ranger2$ 
+5965 ranger2$ ls
+Ex28_data.0  Ex29_data.2  Ex30_data.2      deleteIthNode.cc  main8b.cc
+Ex28_data.1  Ex29_data.3  Ex30_data.3      inlab8.cc         main8c.cc
+Ex28_data.2  Ex29_data.4  ZieglerEx28.log  inlab8.h          structs.h
+Ex28_data.3  Ex29_data.5  ZieglerEx29.log  inlab8.h.gch      structs.h.gch
+Ex29_data.0  Ex30_data.0  ZieglerEx30.log  insertInOrder.cc  typescript
+Ex29_data.1  Ex30_data.1  a.out            main8a.cc
+5966 ranger2$ cat inlab8.cc
+// inlab8.cc
+//
+// This is the implementation file for the ListClass object.  It contains the
+// constructor and destructor
+
+#include "inlab8.h"
+#include <iostream>
+#include <fstream>
+#include <cstdlib>
+using namespace std;
+
+#include "structs.h"
+
+//This is the constructor for the ListClass object
+ListClass::ListClass()
+{
+	head = NULL;
+}//end of constructor
+
+//This is the destructor for the ListClass object
+ListClass::~ListClass()
+{
+	NodePtrType q = head;
+	while (q != NULL)
+	{
+		head = head->next;
+		q->next = NULL;
+		delete q;
+		q=head;
+	}
+}//end of destructor
+
+//This is the function to print out records in the list
+void ListClass::printList()
+{
+	//Place code here to check to see if the list is empty
+	//if it is, print a message saying there are no items
+	//in the list.
+	if (head==NULL)
+	{
+		cout << "There are no items in the list" << endl;
+	}
+	
+	//Place code here to check move from node to node, printing
+	//the account number, a tab, then the balance on one line
+	//with no labels.  For example
+	//1114	395.67
+	else
+	{
+		NodePtrType current = head;
+		while(current != NULL)
+		{
+			cout << current->data.acctNum << "\t" << current->data.balance << endl;
+			current = current->next;
+		}
+	}
+}
+// This function appends the record 'newData' onto the end of the linked list.
+// If the list is empty, the new node is the new head of the list.
+void ListClass::insertAtEnd(RecordType newData)
+//      INOUT   IN
+{
+    NodePtrType newNode, prev;
+
+    // Create a new node to hold the record.
+    newNode = new Node;
+    newNode->data = newData;
+    newNode->next = NULL;
+
+    if (head==NULL)
+    {
+        // The list is empty.  Make the new node the head of the list.
+        head = newNode;	
+    }
+    else
+    {
+        // The list is not empty, scan down to the end of the list and
+        // put the new node there.
+        prev = head;
+        while (prev->next != NULL)
+            prev = prev->next;
+        prev->next = newNode;
+    }
+}//end of insertAtEnd function
+
+
+5967 ranger2$ cat inlab8.h
+//FILE:  inlab8.h
+
+#ifndef LIST_CLASS_H
+#define LIST_CLASS_H
+
+struct Record;
+typedef Record RecordType;
+struct Node;
+typedef Node* NodePtrType;
+typedef Node NodeType;
+
+class ListClass
+{
+public:
+	//constructor
+	ListClass();
+
+	//destructor
+	~ListClass();
+
+	//insertion operations for the linked list
+	void insertAtEnd(RecordType);
+	
+	void insertAtHead(RecordType);
+
+	void insertInMiddle(RecordType, int);
+
+	void insertInOrder(RecordType);
+
+	//function to print out records in the list
+	void printList();
+
+	//function to count the number of items in a list
+	int countItems();
+
+	//deletion operations for the linked list
+	void deleteAtHead();
+
+	void deleteAtEnd();
+
+	void deleteIthNode(int);
+
+	void deleteItem(RecordType);
+private:
+	NodePtrType head;	//points to beginning of the list
+};
+#endif
+5968 ranger2$ 
+5968 ranger2$ 
+5968 ranger2$ 
+5968 ranger2$ ls
+Ex28_data.0  Ex29_data.2  Ex30_data.2      deleteIthNode.cc  main8b.cc
+Ex28_data.1  Ex29_data.3  Ex30_data.3      inlab8.cc         main8c.cc
+Ex28_data.2  Ex29_data.4  ZieglerEx28.log  inlab8.h          structs.h
+Ex28_data.3  Ex29_data.5  ZieglerEx29.log  inlab8.h.gch      structs.h.gch
+Ex29_data.0  Ex30_data.0  ZieglerEx30.log  insertInOrder.cc  typescript
+Ex29_data.1  Ex30_data.1  a.out            main8a.cc
+5969 ranger2$ 
+5969 ranger2$ 
+5969 ranger2$ 
+5969 ranger2$ 
+5969 ranger2$ 
+5969 ranger2$ 
+5969 ranger2$ cat main8a.cc
+//FIle:  main8a.cc
+//This program demonstrates simple linked list manipulation.
+//It shows how to insert at the end of a list and then print the list.
+
+#include "structs.h"
+#include "inlab8.h"
+#include <iostream>
+#include <cstdlib>
+using namespace std;
+
+
+int main(int argc, char *argv[])
+{
+
+	ListClass bankList;
+	char EOLN;
+	RecordType newRec;
+	
+	
+	//Read all of the records from the file and insert them into the list.
+	cin >> newRec.acctNum >> newRec.balance;
+	cin.get(EOLN);
+	while(cin)
+	{
+		bankList.insertAtEnd(newRec);
+		cin >> newRec.acctNum >> newRec.balance;
+		cin.get(EOLN);
+	}
+
+	//Print the list
+	cout<<"The initial list is:\n";	
+	bankList.printList();
+	return(0);
+}
+5970 ranger2$ 
+5970 ranger2$ 
+5970 ranger2$ 
+5970 ranger2$ 
+5970 ranger2$ 
+5970 ranger2$ 
+5970 ranger2$ 
+5970 ranger2$ 
+5970 ranger2$ ls
+Ex28_data.0  Ex29_data.2  Ex30_data.2      deleteIthNode.cc  main8b.cc
+Ex28_data.1  Ex29_data.3  Ex30_data.3      inlab8.cc         main8c.cc
+Ex28_data.2  Ex29_data.4  ZieglerEx28.log  inlab8.h          structs.h
+Ex28_data.3  Ex29_data.5  ZieglerEx29.log  inlab8.h.gch      structs.h.gch
+Ex29_data.0  Ex30_data.0  ZieglerEx30.log  insertInOrder.cc  typescript
+Ex29_data.1  Ex30_data.1  a.out            main8a.cc
+5971 ranger2$ cat main8b.cc
+//FIle: main8b.cc.cc
+//This program demonstrates simple linked list manipulation.
+//It shows how to insert items into a list in sorted order.
+
+#include "structs.h"
+#include "inlab8.h"
+#include <iostream>
+#include <stdlib.h>
+using namespace std;
+
+
+int main(int argc, char *argv[])
+{
+
+	ListClass bankList;
+	char EOLN;
+	RecordType newRec;
+	
+	
+	//Read all of the records from the file and insert them into the list.
+	cout << "Inserting data in ascending order by account number.\n";
+	cin >> newRec.acctNum >> newRec.balance;
+	cin.get(EOLN);
+	while(cin)
+	{
+		bankList.insertInOrder(newRec);
+		cin >> newRec.acctNum >> newRec.balance;
+		cin.get(EOLN);
+	}
+	
+
+	//Print the list
+	bankList.printList();
+	return(0);
+}
+5972 ranger2$ 
+5972 ranger2$ 
+5972 ranger2$ 
+5972 ranger2$ 
+5972 ranger2$ 
+5972 ranger2$ ls
+Ex28_data.0  Ex29_data.2  Ex30_data.2      deleteIthNode.cc  main8b.cc
+Ex28_data.1  Ex29_data.3  Ex30_data.3      inlab8.cc         main8c.cc
+Ex28_data.2  Ex29_data.4  ZieglerEx28.log  inlab8.h          structs.h
+Ex28_data.3  Ex29_data.5  ZieglerEx29.log  inlab8.h.gch      structs.h.gch
+Ex29_data.0  Ex30_data.0  ZieglerEx30.log  insertInOrder.cc  typescript
+Ex29_data.1  Ex30_data.1  a.out            main8a.cc
+5973 ranger2$ cat main8c.cc
+//FIle: main8c.cc
+//This program demonstrates simple linked list manipulation.
+//It shows how to delete the third item in a list.
+
+#include "structs.h"
+#include "inlab8.h"
+#include <iostream>
+#include <stdlib.h>
+using namespace std;
+
+
+int main(int argc, char *argv[])
+{
+
+	ListClass bankList;
+	char EOLN;
+	RecordType newRec;
+	
+	
+	//Read all of the records from the file and insert them into the list.
+	cin >> newRec.acctNum >> newRec.balance;
+	cin.get(EOLN);
+	while(cin)
+	{
+		bankList.insertAtEnd(newRec);
+		cin >> newRec.acctNum >> newRec.balance;
+		cin.get(EOLN);
+	}
+	
+	//Output the initial list
+	cout << "The initial list is: \n";	
+	bankList.printList();
+
+	//Delete the third item and then print the new list
+	cout << "Trying to delete the 3rd item\n";
+	bankList.deleteIthNode(3);
+	cout << "The current list is:" << endl;
+	bankList.printList();
+	return(0);
+}
+5974 ranger2$ 
+5974 ranger2$ 
+5974 ranger2$ 
+5974 ranger2$ 
+5974 ranger2$ 
+5974 ranger2$ ls
+Ex28_data.0  Ex29_data.2  Ex30_data.2      deleteIthNode.cc  main8b.cc
+Ex28_data.1  Ex29_data.3  Ex30_data.3      inlab8.cc         main8c.cc
+Ex28_data.2  Ex29_data.4  ZieglerEx28.log  inlab8.h          structs.h
+Ex28_data.3  Ex29_data.5  ZieglerEx29.log  inlab8.h.gch      structs.h.gch
+Ex29_data.0  Ex30_data.0  ZieglerEx30.log  insertInOrder.cc  typescript
+Ex29_data.1  Ex30_data.1  a.out            main8a.cc
+5975 ranger2$ cat structs.h 
+//This is the structure of the records that will be stored in the list.
+#ifndef STRUCTS_H
+#define STRUCTS_H
+
+struct Record
+{
+	int acctNum;
+	float balance;
+};
+typedef Record RecordType;
+
+//This is the structure of one node in the linked list.
+struct Node
+{
+	RecordType data;
+	Node* next;
+};
+typedef Node NodeType;
+typedef Node* NodePtrType;
+#endif
